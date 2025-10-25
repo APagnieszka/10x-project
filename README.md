@@ -14,6 +14,78 @@ A modern, opinionated starter template for building fast, accessible, and AI-fri
 - Node.js v22.14.0 (as specified in `.nvmrc`)
 - npm (comes with Node.js)
 
+## Node.js Version Management
+
+This project uses a specific Node.js version (v22.14.0) which includes npm 10.9.2. The version is specified in the `.nvmrc` file.
+
+### Using nvm (Recommended)
+
+If you have [nvm](https://github.com/nvm-sh/nvm) installed:
+
+```bash
+# Use the Node.js version specified in .nvmrc
+nvm use
+
+# Install the version if you don't have it
+nvm install
+
+# Verify the versions
+node -v  # Should show v22.14.0
+npm -v   # Should show 10.9.2
+```
+
+### Installing nvm
+
+If you don't have nvm installed:
+
+```bash
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Reload your terminal configuration
+source ~/.zshrc  # or ~/.bashrc for bash users
+
+# Install and use the correct Node.js version
+nvm install 22.14.0
+nvm use 22.14.0
+```
+
+### Troubleshooting Version Issues
+
+If your terminal shows an incorrect Node.js or npm version:
+
+1. **Check if you're using the right version:**
+   ```bash
+   node -v  # Should be v22.14.0
+   npm -v   # Should be 10.9.2
+   ```
+
+2. **If versions are incorrect, try these steps:**
+   ```bash
+   # Make sure you're in the project directory
+   cd /path/to/your/project
+
+   # Use nvm to switch to the correct version
+   nvm use
+
+   # If that doesn't work, explicitly install and use
+   nvm install 22.14.0
+   nvm use 22.14.0
+   ```
+
+3. **Set as default (optional):**
+   ```bash
+   # Make this version your default for new terminal sessions
+   nvm alias default 22.14.0
+   ```
+
+4. **Alternative: Use npx for specific npm version:**
+   ```bash
+   # Run npm commands with specific version without switching Node.js
+   npx npm@10.9.2 install
+   npx npm@10.9.2 run dev
+   ```
+
 ## Getting Started
 
 1. Clone the repository:
