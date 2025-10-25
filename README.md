@@ -124,6 +124,29 @@ npm run build
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues
 
+## Chrome DevTools Workspace
+
+After running the page, right-click on the page and select 'Inspect' to open Chrome DevTools. Then, navigate to Sources -> Workspace and click Connect.
+
+Chrome DevTools Workspace allows you to map local files to sources in DevTools. This enables editing files directly in the browser, and changes can be saved back to your local codebase, reflecting edits made on the page in the source code.
+
+This feature is enabled by the experimental setting in `astro.config.mjs`:
+
+```javascript
+experimental: {
+  chromeDevtoolsWorkspace: true,
+},
+```
+
+To enable Chrome DevTools Workspace:
+
+1. Start the development server with `npm run dev` to serve the application on localhost.
+2. Open Chrome DevTools by right-clicking on the page and selecting 'Inspect'.
+3. In DevTools, go to Sources -> Workspace.
+4. Click 'Add folder' and select the root directory of your project.
+5. Grant permission if prompted to allow DevTools to access the folder.
+6. The workspace should now be connected, allowing you to edit files in DevTools and save changes back to your local files.
+
 ## Project Structure
 
 ```md
