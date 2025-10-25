@@ -55,12 +55,14 @@ nvm use 22.14.0
 If your terminal shows an incorrect Node.js or npm version:
 
 1. **Check if you're using the right version:**
+
    ```bash
    node -v  # Should be v22.14.0
    npm -v   # Should be 10.9.2
    ```
 
 2. **If versions are incorrect, try these steps:**
+
    ```bash
    # Make sure you're in the project directory
    cd /path/to/your/project
@@ -74,6 +76,7 @@ If your terminal shows an incorrect Node.js or npm version:
    ```
 
 3. **Set as default (optional):**
+
    ```bash
    # Make this version your default for new terminal sessions
    nvm alias default 22.14.0
@@ -126,12 +129,12 @@ npm run build
 ```md
 .
 ├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
+│ ├── layouts/ # Astro layouts
+│ ├── pages/ # Astro pages
+│ │ └── api/ # API endpoints
+│ ├── components/ # UI components (Astro & React)
+│ └── assets/ # Static assets
+├── public/ # Public assets
 ```
 
 ## AI Development Support
