@@ -40,7 +40,7 @@ Współczesne gospodarstwa domowe, w szczególności rodziny, często borykają 
 ## 4. Granice projektu
 Wersja MVP nie obejmuje następujących funkcji:
 - Integracji z inteligentnymi urządzeniami (np. lodówkami).
-- Zaawansowanej analityki i personalizowanych rekomendacji.
+- Zaawansowanej analityki i personalizowanych rekomendacji (oprócz eksperymentalnego generowania przepisów w P2).
 - Synchronizacji między wieloma kontami użytkowników w ramach jednego gospodarstwa (MVP zakłada jedno wspólne konto).
 - Dedykowanych aplikacji mobilnych na platformy iOS/Android (dostępna jest tylko PWA).
 - Funkcji płatności i monetyzacji.
@@ -168,8 +168,6 @@ Wersja MVP nie obejmuje następujących funkcji:
 - **Opis:** Jako użytkownik w gospodarstwie domowym, chcę, aby edycja tego samego produktu przez wielu użytkowników na wspólnym koncie była obsługiwana bez błędów lub utraty danych.
 - **Kryteria akceptacji:**
     - W przypadku jednoczesnej edycji tego samego produktu przez kilku użytkowników, stosowana jest strategia "last-write-wins" (ostatnia zmiana zostaje zapisana).
-    - Użytkownicy są informowani o ewentualnych konfliktach poprzez komunikat w aplikacji.
-    - Dane nie są tracone, a system zapewnia spójność inwentarza.
 
 - **ID:** US-016
 - **Tytuł:** Bezpieczny dostęp do danych konta
@@ -188,6 +186,18 @@ Wersja MVP nie obejmuje następujących funkcji:
     - W trybie draft, produkty są wyświetlane z możliwością dodania daty ważności, ilości, jednostki i innych szczegółów.
     - Użytkownik może w wolnej chwili uzupełnić szczegóły i dodać produkt do inwentarza.
     - Produkty w draft pozostają dostępne do momentu dodania do inwentarza lub usunięcia.
+
+- **ID:** US-018
+- **Tytuł:** Eksperymentalne generowanie przepisów na podstawie składników z lodówki
+- **Opis:** Jako użytkownik, chcę móc wygenerować przepis kulinarny na podstawie dostępnych składników w mojej lodówce, aby zmniejszyć marnowanie żywności i ułatwić planowanie posiłków.
+- **Kryteria akceptacji:**
+    - W aplikacji dostępny jest przycisk lub sekcja "Wygeneruj przepis" w widoku inwentarza.
+    - Po kliknięciu, system wysyła listę dostępnych składników (nazwy produktów) do Openrouter.ai.
+    - AI generuje propozycję przepisu w języku wybranym przez użytkownika (polski/angielski).
+    - Przepis zawiera listę składników (z zaznaczeniem, które są dostępne w lodówce), instrukcje przygotowania i szacowany czas.
+    - Funkcjonalność jest oznaczona jako eksperymentalna z odpowiednim disclaimerem.
+    - Użytkownik może zapisać przepis lub odrzucić go.
+    - Generowanie przepisu jest ograniczone do 5 razy dziennie per konto (rate limiting).
 
 ## 6. Metryki sukcesu
 - **Wydajność:** Czas od rozpoczęcia dodawania produktu do jego pojawienia się na liście nie przekracza 30 sekund.
@@ -255,6 +265,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 | Open Food Facts API | Pobranie danych produktu | JSON (GET) | Rate limit, brak produktu | Manualne wprowadzenie |
 | QuaggaJS | Skan kodu kreskowego | JS client | Wymaga dobrej jakości obrazu | Ręczne dodanie kodu |
 | Tesseract.js | OCR dat ważności | JS + WASM | Wydajność zależna od urządzenia | Ręczne wpisanie daty |
+| Openrouter.ai | Generowanie przepisów | API | Koszty zależne od użycia | Komunikat o niedostępności |
 | Supabase Auth | Uwierzytelnianie | API | Zależność od dostępności usługi | Retry / komunikat |
 | Supabase Storage | Przechowywanie zdjęć | API | Koszty rosną z wolumenem | Retencja / kompresja |
 
@@ -273,6 +284,7 @@ Minimalny zestaw zdarzeń (anonimowych, powiązanych tylko z kontem gospodarstwa
 - `spoiled_report_generated`
 - `monthly_report_generated`
 - `yearly_report_generated`
+- `recipe_generated` (pole `ingredients_count`, `language`)
 // Future (P1/P2): rozważenie `digest_email_opened`, `digest_email_link_clicked` jeśli potrzebna głębsza analiza zaangażowania.
 
 ## 12. Polityka retencji danych
@@ -293,7 +305,7 @@ Minimalny zestaw zdarzeń (anonimowych, powiązanych tylko z kontem gospodarstwa
 ## 14. Priorytety funkcjonalności (P0 / P1 / P2)
 **P0 (Core MVP):** US-001, US-002, US-003, US-004, US-005, US-006, US-007, US-013, US-016, podstawowa analityka, retencja zdjęć, multi-język UI.
 **P1:** US-008 (lista zakupów), US-017 (interaktywna lista zakupów z draft), US-010 (ponowne użycie produktu), US-011 (raport zepsutych + e-mail), rozszerzone eventy analityczne, podstawowy rate limiting.
-**P2:** Offline dodawanie produktów, zaawansowana korekcja OCR, rozbudowana polityka powiadomień, rozbudowane raporty trendów marnowania.
+**P2:** Offline dodawanie produktów, zaawansowana korekcja OCR, rozbudowana polityka powiadomień, rozbudowane raporty trendów marnowania, US-018 (eksperymentalne generowanie przepisów).
 
 ## 15. Słownik pojęć
 | Pojęcie | Definicja |
