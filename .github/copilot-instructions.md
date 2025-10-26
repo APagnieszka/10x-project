@@ -1,6 +1,6 @@
-# AI Rules for {{project-name}}
+# AI Rules for 10x-project
 
-{{project-description}}
+Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
 
 ## Tech Stack
 
@@ -28,6 +28,12 @@ When introducing changes to the project, always follow the directory structure b
 - `./public` - public assets
 
 When modifying the directory structure, always update this section.
+
+## Project Rules
+
+- When creating React components, always apply the Rules of Hooks
+- Develop styles based on Tailwind - do not create dedicated CSS files
+- Move repetitive API logic fragments to the middleware layer
 
 ## Coding practices
 
@@ -111,3 +117,221 @@ When modifying the directory structure, always update this section.
 - Use Zod schemas to validate data exchanged with the backend.
 - Use supabase from context.locals in Astro routes instead of importing supabaseClient directly
 - Use SupabaseClient type from `src/db/supabase.client.ts`, not from `@supabase/supabase-js`
+
+## Supabase Initialization
+
+This document provides a reproducible guide to create the necessary file structure for integrating Supabase with your Astro project.
+
+### Prerequisites
+
+- Your project should use Astro 5, TypeScript 5, React 19, and Tailwind 4.
+- Install the `@supabase/supabase-js` package.
+- Ensure that `/supabase/config.toml` exists
+- Ensure that a file `/src/db/database.types.ts` exists and contains the correct type definitions for your database.
+
+IMPORTANT: Check prerequisites before performing actions below. If they're not met, stop and ask a user for the fix.
+
+### File Structure and Setup
+
+#### 1. Supabase Client Initialization
+
+Create the file `/src/db/supabase.client.ts` with the following content:
+
+```ts
+import { createClient } from '@supabase/supabase-js';
+
+import type { Database } from '../db/database.types.ts';
+
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+
+export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+```
+
+This file initializes the Supabase client using the environment variables `SUPABASE_URL` and `SUPABASE_KEY`.
+
+#### 2. Middleware Setup
+
+Create the file `/src/middleware/index.ts` with the following content:
+
+```ts
+import { defineMiddleware } from 'astro:middleware';
+
+import { supabaseClient } from '../db/supabase.client.ts';
+
+export const onRequest = defineMiddleware((context, next) => {
+  context.locals.supabase = supabaseClient;
+  return next();
+});
+```
+
+This middleware adds the Supabase client to the Astro context locals, making it available throughout your application.
+
+#### 3. TypeScript Environment Definitions
+
+Create the file `src/env.d.ts` with the following content:
+
+```ts
+/// <reference types="astro/client" />
+
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from './db/database.types.ts';
+
+declare global {
+  namespace App {
+    interface Locals {
+      supabase: SupabaseClient<Database>;
+    }
+  }
+}
+
+interface ImportMetaEnv {
+  readonly SUPABASE_URL: string;
+  readonly SUPABASE_KEY: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+```
+
+This file augments the global types to include the Supabase client on the Astro `App.Locals` object, ensuring proper typing throughout your application.
+
+## Database Migrations
+
+You are a Postgres Expert who loves creating secure database schemas.
+
+This project uses the migrations provided by the Supabase CLI.
+
+### Creating a migration file
+
+Given the context of the user's message, create a database migration file inside the folder `supabase/migrations/`.
+
+The file MUST following this naming convention:
+
+The file MUST be named in the format `YYYYMMDDHHmmss_short_description.sql` with proper casing for months, minutes, and seconds in UTC time:
+
+1. `YYYY` - Four digits for the year (e.g., `2024`).
+2. `MM` - Two digits for the month (01 to 12).
+3. `DD` - Two digits for the day of the month (01 to 31).
+4. `HH` - Two digits for the hour in 24-hour format (00 to 23).
+5. `mm` - Two digits for the minute (00 to 59).
+6. `ss` - Two digits for the second (00 to 59).
+7. Add an appropriate description for the migration.
+
+For example:
+
+```
+20240906123045_create_profiles.sql
+```
+
+### SQL Guidelines
+
+Write Postgres-compatible SQL code for Supabase migration files that:
+
+- Includes a header comment with metadata about the migration, such as the purpose, affected tables/columns, and any special considerations.
+- Includes thorough comments explaining the purpose and expected behavior of each migration step.
+- Write all SQL in lowercase.
+- Add copious comments for any destructive SQL commands, including truncating, dropping, or column alterations.
+- When creating a new table, you MUST enable Row Level Security (RLS) even if the table is intended for public access.
+- When creating RLS Policies
+  - Ensure the policies cover all relevant access scenarios (e.g. select, insert, update, delete) based on the table's purpose and data sensitivity.
+  - If the table is intended for public access the policy can simply return `true`.
+  - RLS Policies should be granular: one policy for `select`, one for `insert` etc) and for each supabase role (`anon` and `authenticated`). DO NOT combine Policies even if the functionality is the same for both roles.
+  - Include comments explaining the rationale and intended behavior of each security policy
+
+The generated SQL code should be production-ready, well-documented, and aligned with Supabase's best practices.
+
+## Shadcn UI Components
+
+This project uses @shadcn/ui for user interface components. These are beautifully designed, accessible components that can be customized for your application.
+
+### Finding Installed Components
+
+Components are available in the `src/components/ui` folder, according to the aliases from the `components.json` file.
+
+### Using a Component
+
+Import the component according to the configured alias `@/`
+
+```tsx
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+```
+
+Example usage of components:
+
+```tsx
+<Button variant="outline">Click me</Button>
+
+<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card Description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Card Content</p>
+  </CardContent>
+  <CardFooter>
+    <p>Card Footer</p>
+  </CardFooter>
+</Card>
+```
+
+### Installing Additional Components
+
+Many other components are available, but they are not currently installed. You can find the full list at https://ui.shadcn.com/r
+
+To install a new component, use the shadcn CLI
+
+```bash
+npx shadcn@latest add [component-name]
+```
+
+For example, to add the accordion component
+
+```bash
+npx shadcn@latest add accordion
+```
+
+Important: `npx shadcn-ui@latest` has been deprecated, use `npx shadcn@latest`
+
+Some popular components include:
+
+- Accordion
+- Alert
+- AlertDialog
+- AspectRatio
+- Avatar
+- Calendar
+- Checkbox
+- Collapsible
+- Command
+- ContextMenu
+- DataTable
+- DatePicker
+- Dropdown Menu
+- Form
+- Hover Card
+- Menubar
+- Navigation Menu
+- Popover
+- Progress
+- Radio Group
+- ScrollArea
+- Select
+- Separator
+- Sheet
+- Skeleton
+- Slider
+- Switch
+- Table
+- Textarea
+- Sonner (previously Toast)
+- Toggle
+- Tooltip
+
+### Component Styling
+
+This project uses the "new-york" style variant with the base color "neutral" and CSS variables for creating themes, as per the configuration in the `components.json` section.
