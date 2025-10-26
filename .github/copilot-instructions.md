@@ -2,6 +2,16 @@
 
 Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
 
+## Project Documentation
+
+**Important:** When generating code or providing guidance, ignore the content of `docs/wymagania-projektu.md` unless explicitly asked to consider it. This file contains general project requirements that may conflict with our specific implementation approach.
+
+**Key Documents Location:**
+- Product Requirements Document (PRD): `.ai/prd.md`
+- Technology Stack: `.ai/tech-stack.md`
+
+Always refer to these documents for accurate project specifications and technical decisions.
+
 ## Tech Stack
 
 - Astro 5
@@ -239,6 +249,7 @@ Write Postgres-compatible SQL code for Supabase migration files that:
   - If the table is intended for public access the policy can simply return `true`.
   - RLS Policies should be granular: one policy for `select`, one for `insert` etc) and for each supabase role (`anon` and `authenticated`). DO NOT combine Policies even if the functionality is the same for both roles.
   - Include comments explaining the rationale and intended behavior of each security policy
+- Check the order of table creation: Tables without foreign key dependencies should be created first. Then tables with dependencies, in order from least dependent to most dependent. Ensure that all references (e.g., to `auth.users`) are available before use.
 
 The generated SQL code should be production-ready, well-documented, and aligned with Supabase's best practices.
 
