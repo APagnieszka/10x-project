@@ -1,4 +1,4 @@
-# Application - DoNotWasteFood (MVP)
+# Application - Foodzilla (MVP)
 
 ## Main Problem
 Users have difficulty with food in the fridge that becomes expired just because they forget about it when it stands somewhere on the back shelf.
