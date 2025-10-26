@@ -1,23 +1,6 @@
-# AI Rules for {{project-name}}
+# AI Rules for 10x-project
 
-{{project-description}}
-
-## Important: Follow Instructions from .github/instructions/
-
-**All development work MUST follow the detailed guidelines and rules specified in the `.github/instructions/` directory.** 
-
-These instructions are organized by technology and file type:
-- `coding-standards.instructions.md` - General coding standards and practices
-- `general.instructions.md` - Frontend, backend, and accessibility guidelines
-- `astro.instructions.md` - Astro-specific guidelines (apply to `*.astro` files)
-- `react.instructions.md` - React-specific guidelines (apply to `*.tsx` files)
-- `frontend.instructions.md` - Frontend guidelines (apply to `*.tsx,*.astro` files)
-- `backend.instructions.md` - Backend guidelines (apply to `src/db/*.ts,src/middleware/*.ts,src/lib/*.ts`)
-- `database-migrations.instructions.md` - Database migration guidelines
-- `shadcn-ui.instructions.md` - Shadcn UI component guidelines
-- `supabase-init.instructions.md` - Supabase initialization guide
-
-**Before making any changes, always check the relevant instruction files in `.github/instructions/` and follow their rules precisely.**
+Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
 
 ## Tech Stack
 
