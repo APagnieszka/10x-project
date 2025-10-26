@@ -4,7 +4,7 @@ SET session_replication_role = replica;
 -- PostgreSQL database dump
 --
 
--- \restrict L3Js95XW7RRUjs54KobFe520C0v1V95IRVK2wj8WoxOvnNB52Xgz0CPANW6tO9L
+-- \restrict EumXYrxZWuxpaETDgufxe4OWIOIbkLWHAa9jo1JI2zhbaB8DhVhszcC30HeYz6o
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -130,6 +130,66 @@ SET row_security = off;
 
 
 --
+-- Data for Name: households; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: analytics_events; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: archived_products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: reports; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: scans_log; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: shopping_lists; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: shopping_list_items; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: user_households; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
 -- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --
 
@@ -191,6 +251,69 @@ SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 1, false);
 
 
 --
+-- Name: analytics_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."analytics_events_id_seq"', 1, false);
+
+
+--
+-- Name: archived_products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."archived_products_id_seq"', 1, false);
+
+
+--
+-- Name: households_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."households_id_seq"', 1, false);
+
+
+--
+-- Name: images_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."images_id_seq"', 1, false);
+
+
+--
+-- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."products_id_seq"', 1, false);
+
+
+--
+-- Name: reports_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."reports_id_seq"', 1, false);
+
+
+--
+-- Name: scans_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."scans_log_id_seq"', 1, false);
+
+
+--
+-- Name: shopping_list_items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."shopping_list_items_id_seq"', 1, false);
+
+
+--
+-- Name: shopping_lists_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."shopping_lists_id_seq"', 1, false);
+
+
+--
 -- Name: hooks_id_seq; Type: SEQUENCE SET; Schema: supabase_functions; Owner: supabase_functions_admin
 --
 
@@ -201,6 +324,6 @@ SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
 -- PostgreSQL database dump complete
 --
 
--- \unrestrict L3Js95XW7RRUjs54KobFe520C0v1V95IRVK2wj8WoxOvnNB52Xgz0CPANW6tO9L
+-- \unrestrict EumXYrxZWuxpaETDgufxe4OWIOIbkLWHAa9jo1JI2zhbaB8DhVhszcC30HeYz6o
 
 RESET ALL;
