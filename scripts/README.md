@@ -32,3 +32,18 @@ A shell script that properly stops the Supabase local development environment wh
 3. Stops Supabase services without backup
 
 **Note:** Requires Supabase CLI to be installed.
+
+### get-anon-key.sh
+A shell script that retrieves the Supabase anon key from the local development environment.
+
+**Usage:**
+```bash
+./scripts/get-anon-key.sh
+```
+
+**What it does:**
+1. Runs `supabase status -o env` to get environment variables
+2. Extracts and displays the SUPABASE_ANON_KEY value
+
+**Note:** Requires Supabase CLI to be installed and local Supabase to be running.
+```
