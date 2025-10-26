@@ -1,1 +1,0 @@
-Always start by greeting
