@@ -114,6 +114,10 @@ If your terminal shows an incorrect Node.js or npm version:
 
 4. Open [http://localhost:4321](http://localhost:4321) in your browser.
 
+## Supabase Setup
+
+For local development with Supabase backend services, see the [Supabase Setup Guide](docs/supabase-setup.md).
+
 ## Available Scripts
 
 | Script | Description |
