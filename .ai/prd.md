@@ -49,6 +49,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-001
 - **Tytuł:** Rejestracja konta dla gospodarstwa domowego
+- **Priorytet:** P0
 - **Opis:** Jako nowy użytkownik, chcę móc założyć jedno wspólne konto dla mojego gospodarstwa domowego, używając adresu e-mail i hasła, aby wszyscy domownicy mogli z niego korzystać.
 - **Kryteria akceptacji:**
     - Formularz rejestracji wymaga podania prawidłowego adresu e-mail i hasła.
@@ -58,6 +59,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-002
 - **Tytuł:** Logowanie do aplikacji
+- **Priorytet:** P0
 - **Opis:** Jako powracający użytkownik, chcę móc zalogować się na konto mojego gospodarstwa domowego przy użyciu e-maila i hasła.
 - **Kryteria akceptacji:**
     - Użytkownik może się zalogować, podając prawidłowe dane.
@@ -66,6 +68,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-003
 - **Tytuł:** Szybkie dodawanie produktu przez skanowanie kodu kreskowego
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę zeskanować kod kreskowy produktu, aby automatycznie wypełnić jego nazwę i markę, oszczędzając czas na ręcznym wpisywaniu.
 - **Kryteria akceptacji:**
     - Aplikacja aktywuje aparat w celu zeskanowania kodu kreskowego.
@@ -74,6 +77,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-004
 - **Tytuł:** Dodawanie daty ważności za pomocą OCR
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę zrobić zdjęcie etykiety z datą ważności, aby system automatycznie ją rozpoznał i wypełnił odpowiednie pole.
 - **Kryteria akceptacji:**
     - Użytkownik może zrobić zdjęcie lub wybrać je z galerii.
@@ -83,6 +87,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-005
 - **Tytuł:** Ręczne dodawanie produktu
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę mieć możliwość ręcznego dodania produktu, który nie ma kodu kreskowego (np. warzywa) lub nie został znaleziony w bazie.
 - **Kryteria akceptacji:**
     - Formularz pozwala na wpisanie nazwy, marki (opcjonalnie), ilości i jednostki.
@@ -92,6 +97,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-006
 - **Tytuł:** Otrzymywanie powiadomień o zbliżającej się dacie ważności
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę otrzymywać powiadomienia (push i e-mail), gdy data ważności produktu zbliża się ku końcowi, aby zdążyć go zużyć.
 - **Kryteria akceptacji:**
     - System wysyła powiadomienia na 3 dni i 1 dzień przed upływem daty ważności.
@@ -100,6 +106,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-007
 - **Tytuł:** Oznaczanie produktu jako "otwarty"
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę móc oznaczyć produkt jako "otwarty", aby system mógł monitorować jego świeżość po otwarciu.
 - **Kryteria akceptacji:**
     - Przy produkcie znajduje się przełącznik do oznaczenia go jako "otwarty".
@@ -108,6 +115,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-008
 - **Tytuł:** Przenoszenie produktu do listy zakupów
+- **Priorytet:** P1
 - **Opis:** Jako użytkownik, po zużyciu produktu chcę mieć możliwość łatwego przeniesienia go na listę zakupów, aby pamiętać o jego ponownym kupnie.
 - **Kryteria akceptacji:**
     - Przy usuwaniu produktu z inwentarza dostępna jest opcja "Dodaj do listy zakupów".
@@ -115,6 +123,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-009
 - **Tytuł:** Zarządzanie prywatnością i analityką
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę mieć kontrolę nad zbieraniem anonimowych danych o moim użytkowaniu aplikacji.
 - **Kryteria akceptacji:**
     - W ustawieniach konta znajduje się przełącznik do włączenia/wyłączenia zbierania danych analitycznych.
@@ -123,6 +132,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-010
 - **Tytuł:** Wybór istniejącego produktu przy ponownym zakupie
+- **Priorytet:** P1
 - **Opis:** Jako użytkownik, który ponownie kupił ten sam produkt, chcę móc wybrać go z listy już dodanych produktów, aby nie musieć ponownie skanować kodu kreskowego i robić zdjęć.
 - **Kryteria akceptacji:**
     - Podczas dodawania produktu, po zeskanowaniu kodu, jeśli produkt już istnieje w bazie, użytkownik może go wybrać z listy.
@@ -130,6 +140,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-011
 - **Tytuł:** Oznaczanie produktu jako zepsuty i generowanie tygodniowego raportu
+- **Priorytet:** P1
 - **Opis:** Jako użytkownik, chcę móc oznaczyć produkt jako zepsuty, aby system mógł śledzić ilość zmarnowanej żywności i generować tygodniowy raport podsumowujący ilość zepsutych produktów.
 - **Kryteria akceptacji:**
     - Przy produkcie znajduje się opcja oznaczenia go jako "zepsuty".
@@ -141,6 +152,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-012
 - **Tytuł:** Wybór języka aplikacji
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę móc wybrać język aplikacji między polskim a angielskim, aby korzystać z niej w preferowanym języku.
 - **Kryteria akceptacji:**
     - W ustawieniach aplikacji dostępny jest przełącznik lub lista wyboru języka (polski lub angielski).
@@ -149,6 +161,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-013
 - **Tytuł:** Usuwanie zużytego produktu
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę móc łatwo usunąć produkt z inwentarza po jego zużyciu, bez konieczności przenoszenia go do listy zakupów.
 - **Kryteria akceptacji:**
     - Przy produkcie dostępna jest opcja "Usuń" lub "Oznacz jako zużyty".
@@ -157,6 +170,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-014
 - **Tytuł:** Zarządzanie przechowywaniem zdjęć
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę, aby zdjęcia dat ważności były automatycznie usuwane po pewnym czasie, aby oszczędzać miejsce w pamięci aplikacji i chronić prywatność.
 - **Kryteria akceptacji:**
     - Zdjęcia dat ważności są automatycznie usuwane po 100 dniach od dodania produktu.
@@ -165,12 +179,14 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-015
 - **Tytuł:** Obsługa jednoczesnej edycji produktów
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik w gospodarstwie domowym, chcę, aby edycja tego samego produktu przez wielu użytkowników na wspólnym koncie była obsługiwana bez błędów lub utraty danych.
 - **Kryteria akceptacji:**
     - W przypadku jednoczesnej edycji tego samego produktu przez kilku użytkowników, stosowana jest strategia "last-write-wins" (ostatnia zmiana zostaje zapisana).
 
 - **ID:** US-016
 - **Tytuł:** Bezpieczny dostęp do danych konta
+- **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę mieć pewność, że moje dane (historia zakupów, stan produktów) są widoczne tylko dla mnie i innych użytkowników na tym samym koncie gospodarstwa domowego, aby chronić prywatność.
 - **Kryteria akceptacji:**
     - Tylko zalogowani użytkownicy na tym samym koncie mają dostęp do danych.
@@ -179,6 +195,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-017
 - **Tytuł:** Interaktywna lista zakupów z trybem draft
+- **Priorytet:** P1
 - **Opis:** Jako użytkownik, chcę mieć interaktywną listę zakupów, gdzie po odznaczeniu produktu jako kupionego, zostaje on przeniesiony do listy produktów w trybie draft, które mogę później uzupełnić o daty ważności i dodać do inwentarza.
 - **Kryteria akceptacji:**
     - Lista zakupów pozwala na odznaczenie produktu jako kupionego (np. checkbox lub przycisk).
@@ -189,6 +206,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 
 - **ID:** US-018
 - **Tytuł:** Eksperymentalne generowanie przepisów na podstawie składników z lodówki
+- **Priorytet:** P2
 - **Opis:** Jako użytkownik, chcę móc wygenerować przepis kulinarny na podstawie dostępnych składników w mojej lodówce, aby zmniejszyć marnowanie żywności i ułatwić planowanie posiłków.
 - **Kryteria akceptacji:**
     - W aplikacji dostępny jest przycisk lub sekcja "Wygeneruj przepis" w widoku inwentarza.
