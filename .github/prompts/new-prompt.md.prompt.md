@@ -8,7 +8,7 @@ Create a new .prompt.md file in the .github/prompts/ directory to define reusabl
 
 1. Create a new file with the naming convention: `[task-name].prompt.md`
 2. Include frontmatter with `mode: agent` for AI processing
-3. Write clear, specific instructions for the task
+3. Write clear, specific instructions for the task in English only (as per coding standards: all code, comments, and project files must be in English)
 4. Place the file in `.github/prompts/` directory
 
 ## Why It's Worth Adding
