@@ -46,4 +46,18 @@ A shell script that retrieves the Supabase anon key from the local development e
 2. Extracts and displays the SUPABASE_ANON_KEY value
 
 **Note:** Requires Supabase CLI to be installed and local Supabase to be running.
+
+### generate-types.sh
+A shell script that generates TypeScript types from the local Supabase database schema.
+
+**Usage:**
+```bash
+./scripts/generate-types.sh
+```
+
+**What it does:**
+1. Runs `supabase gen types typescript --local` to generate types
+2. Saves the generated types to `src/db/database.types.ts`
+
+**Note:** Requires Supabase CLI to be installed and local Supabase to be running.
 ```
