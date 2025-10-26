@@ -17,8 +17,13 @@ Współczesne gospodarstwa domowe, w szczególności rodziny, często borykają 
 - **Zarządzanie produktami:**
     - Oznaczanie produktu jako "otwarty" (`opened`) wraz z datą otwarcia (`opened_date`).
     - Przenoszenie produktu do listy zakupów (status `ToBuy`), co powoduje usunięcie go z inwentarza.
+    - Interaktywna lista zakupów z możliwością odznaczenia produktów jako kupionych, co przenosi je do listy draft na uzupełnienie szczegółów przed dodaniem do inwentarza.
     - Łatwe usuwanie produktów oznaczonych jako skonsumowane.
     - Oznaczanie produktu jako "zepsuty" (`spoiled`), co tworzy wpis w bazie danych i pozwala na śledzenie ilości zmarnowanej żywności oraz generowanie tygodniowego raportu. Po oznaczeniu, użytkownik jest pytany, czy usunąć produkt z inwentarza, czy przenieść do listy zakupów.
+- **Raporty i analizy marnowania żywności:**
+    - Raporty tygodniowe podsumowujące ilość zepsutych produktów są zapisywane w bazie danych, aby były dostępne historycznie.
+    - Użytkownik może przeglądać historyczne raporty tygodniowe w aplikacji.
+    - Użytkownik może wygenerować podsumowujący raport miesięczny lub roczny na podstawie zgromadzonych danych o zepsutych produktach.
 - **Powiadomienia:**
     - Powiadomienia web-push (przez Service Worker w PWA) oraz dzienny digest e-mailowy wysyłany o 8:00 rano czasu lokalnego gospodarstwa.
     - Domyślne przypomnienia na 3 dni i 1 dzień przed upływem daty ważności.
@@ -82,6 +87,7 @@ Wersja MVP nie obejmuje następujących funkcji:
 - **Kryteria akceptacji:**
     - Formularz pozwala na wpisanie nazwy, marki (opcjonalnie), ilości i jednostki.
     - Użytkownik może ręcznie wprowadzić datę ważności lub użyć skrótów (+1 tydzień, +1 miesiąc).
+    - Użytkownik może wybrać produkt z listy ulubionych, co wstępnie wypełnia formularz nazwą i marką.
     - Po wypełnieniu wymaganych pól, produkt jest dodawany do inwentarza.
 
 - **ID:** US-006
@@ -129,6 +135,9 @@ Wersja MVP nie obejmuje następujących funkcji:
     - Przy produkcie znajduje się opcja oznaczenia go jako "zepsuty".
     - Po oznaczeniu, produkt jest oznaczany jako zepsuty (wpis w bazie danych), a użytkownik jest pytany, czy usunąć go z inwentarza, czy przenieść do listy zakupów.
     - Raz w tygodniu (np. w niedzielę) generowany jest raport podsumowujący ilość zepsutych produktów w danym tygodniu, wysyłany e-mailem lub dostępny w aplikacji.
+    - Raporty tygodniowe są zapisywane w bazie danych, aby były dostępne historycznie.
+    - Użytkownik może przeglądać historyczne raporty tygodniowe w aplikacji.
+    - Użytkownik może wygenerować podsumowujący raport miesięczny lub roczny na podstawie zgromadzonych danych o zepsutych produktach.
 
 - **ID:** US-012
 - **Tytuł:** Wybór języka aplikacji
@@ -170,6 +179,16 @@ Wersja MVP nie obejmuje następujących funkcji:
     - Próba dostępu przez nieautoryzowanych użytkowników (np. z innego konta) jest blokowana z komunikatem o błędzie.
     - System używa bezpiecznych mechanizmów Supabase do weryfikacji dostępu.
 
+- **ID:** US-017
+- **Tytuł:** Interaktywna lista zakupów z trybem draft
+- **Opis:** Jako użytkownik, chcę mieć interaktywną listę zakupów, gdzie po odznaczeniu produktu jako kupionego, zostaje on przeniesiony do listy produktów w trybie draft, które mogę później uzupełnić o daty ważności i dodać do inwentarza.
+- **Kryteria akceptacji:**
+    - Lista zakupów pozwala na odznaczenie produktu jako kupionego (np. checkbox lub przycisk).
+    - Po odznaczeniu, produkt zostaje usunięty z listy zakupów i dodany do listy draft produktów.
+    - W trybie draft, produkty są wyświetlane z możliwością dodania daty ważności, ilości, jednostki i innych szczegółów.
+    - Użytkownik może w wolnej chwili uzupełnić szczegóły i dodać produkt do inwentarza.
+    - Produkty w draft pozostają dostępne do momentu dodania do inwentarza lub usunięcia.
+
 ## 6. Metryki sukcesu
 - **Wydajność:** Czas od rozpoczęcia dodawania produktu do jego pojawienia się na liście nie przekracza 30 sekund.
 - **Jakość rozpoznawania:**
@@ -178,3 +197,127 @@ Wersja MVP nie obejmuje następujących funkcji:
 - **Użyteczność:** Co najmniej 50% nowych użytkowników dodaje minimum 3 produkty podczas pierwszej sesji.
 - **Stabilność:** Wskaźnik błędów podczas dodawania produktów lub przetwarzania danych jest niższy niż 10%.
 - **Zaangażowanie:** Mierzony odsetek użytkowników, którzy regularnie otwierają powiadomienia i digest e-mailowy (wskaźnik `notification_clicked`).
+
+## 7. Wymagania niefunkcjonalne (NFR)
+**Wydajność:**
+- Skanowanie kodu kreskowego: wykrycie + wypełnienie formularza ≤ 2 s (przy stabilnym oświetleniu).
+- OCR jednej etykiety (≤ 2 MB) zakończony w ≤ 5 s w 90% przypadków.
+- Czas odpowiedzi API (dodanie produktu do listy) ≤ 800 ms średnio / ≤ 1500 ms w p95.
+
+**Skalowalność:**
+- Jedno konto gospodarstwa obsługuje do 5 000 aktywnych produktów bez degradacji (czas listowania p95 ≤ 1200 ms).
+- Architektura zakłada wzrost do 50 000 produktów per konto w przyszłości (wykracza poza MVP).
+
+**Dostępność i niezawodność:**
+- Docelowy uptime aplikacji (warstwa frontend+API) ≥ 99%.
+- Mechanizm retry (max 2 próby) przy chwilowym błędzie połączenia z Open Food Facts.
+
+**Bezpieczeństwo:**
+- Hasła i auth w Supabase (bcrypt/argon2 zgodnie ze standardem Supabase).
+- Row Level Security (RLS) dla tabel produktów powiązanych z kontem gospodarstwa.
+- Bucket `expiry-images` prywatny (brak listowania); dostęp wyłącznie przez signed URL ważny ≤ 15 min; generowany przy każdym wyświetleniu szczegółów produktu.
+- Bucket `product-images` może być publiczny (neutralne opakowania); w przyszłości opcja migracji do signed URL jeśli pojawią się dane wrażliwe.
+- EXIF/metadane usuwane (re-encoding) dla zdjęć w `expiry-images`.
+- Logowanie zdarzenia `image_access_granted` przy wydaniu signed URL (ID produktu, typ obrazu, timestamp).
+- Rate limiting: max 60 operacji OCR + 120 skanów kodów kreskowych na godzinę per konto.
+
+**Obsługa offline (PWA):**
+- Cache statycznych zasobów (ikon, manifest, podstawowych skryptów) przez Service Worker.
+- Brak wsparcia dodawania produktu offline w MVP (wymagane połączenie; ewentualna kolejka w przyszłym P2).
+
+**Dostępność (a11y):**
+- Kluczowe ekrany (lista produktów, dodawanie, szczegóły) zgodne z WCAG 2.1 AA: kontrast, focus outline, tekst alternatywny zdjęć.
+- Interaktywne elementy dostępne przez klawiaturę.
+
+**Lokalizacja czasu i strefy:**
+- Powiadomienia e-mail wysyłane o 8:00 czasu skonfigurowanej strefy konta (strefa czasowa konfigurowalna w ustawieniach).
+
+## 8. Założenia
+- Jedno konto reprezentuje całe gospodarstwo domowe — brak ról użytkowników.
+- Użytkownicy godzą się na dostęp do kamery dla skanowania / OCR.
+- Format daty w bazie: ISO 8601 (YYYY-MM-DD).
+- Użytkownicy tolerują sporadyczne błędy OCR i ręczną korektę.
+- Brak konieczności integracji z zewnętrznymi kalendarzami i urządzeniami IoT w MVP.
+
+## 9. Ryzyka i strategie mitygacji
+| Ryzyko | Skutek | Mitigacja | Status |
+|--------|--------|-----------|--------|
+| Niska jakość zdjęć etykiet (rozmazane) | Błędna OCR data | Overlay z poradami: "Ustaw ostrość, unikaj refleksów" | Planowane |
+| Niedostępność Open Food Facts | Brak automatycznego wypełnienia danych | Fallback do ręcznego formularza + komunikat | Planowane |
+| Odmowa zgody na powiadomienia push | Niższe zaangażowanie | Alternatywa: e-mail digest / badge w UI | Planowane |
+| Przeciążenie OCR (dużo zdjęć naraz) | Wydłużenie czasu przetwarzania | Rate limiting + kolejka | Planowane |
+| Konflikty edycji (last-write-wins) mylą użytkownika | Utrata oczekiwanej zmiany | Wyświetlenie timestamp i alert przy kolizji | Rozważane |
+| Wysokie koszty storage zdjęć | Wzrost kosztów operacyjnych | Retencja 100 dni + kompresja | Wdrożone (częściowo) |
+
+## 10. Integracje zewnętrzne
+| Usługa | Cel | Format | Ograniczenia | Fallback |
+|--------|-----|-------|--------------|----------|
+| Open Food Facts API | Pobranie danych produktu | JSON (GET) | Rate limit, brak produktu | Manualne wprowadzenie |
+| QuaggaJS | Skan kodu kreskowego | JS client | Wymaga dobrej jakości obrazu | Ręczne dodanie kodu |
+| Tesseract.js | OCR dat ważności | JS + WASM | Wydajność zależna od urządzenia | Ręczne wpisanie daty |
+| Supabase Auth | Uwierzytelnianie | API | Zależność od dostępności usługi | Retry / komunikat |
+| Supabase Storage | Przechowywanie zdjęć | API | Koszty rosną z wolumenem | Retencja / kompresja |
+
+## 11. Eventy analityczne
+Minimalny zestaw zdarzeń (anonimowych, powiązanych tylko z kontem gospodarstwa) – bez śledzenia otwarć e-mail w MVP:
+- `product_added`
+- `product_removed`
+- `product_spoiled`
+- `barcode_scan_success`
+- `barcode_scan_fail`
+- `ocr_attempt`
+- `ocr_success` (pole `confidence_bucket`: `<50`, `50-79`, `80-89`, `90+`)
+- `notification_sent`
+- `notification_clicked`
+- `digest_email_sent`
+- `spoiled_report_generated`
+- `monthly_report_generated`
+- `yearly_report_generated`
+// Future (P1/P2): rozważenie `digest_email_opened`, `digest_email_link_clicked` jeśli potrzebna głębsza analiza zaangażowania.
+
+## 12. Polityka retencji danych
+| Typ danych | Retencja | Powód | Uwagi |
+|------------|----------|-------|-------|
+| Zdjęcia dat ważności | 100 dni | Prywatność / oszczędność miejsca | Auto-usunięcie zadaniem cyklicznym |
+| Zdjęcia produktów / kodów | Bezterminowo | Historia / powtórne dodawanie | Możliwa przyszła optymalizacja |
+| Logi analityczne | 100 dni | Analiza trendów krótkoterminowych | Agregacja po 30 dniach (redukcja szczegółów) |
+| Raporty tyg. zepsutych | 180 dni | Analiza marnowania | Możliwa anonimizacja po 90 dniach |
+
+## 13. Lokalizacja i dostępność (i18n / a11y)
+- Języki wspierane: PL (domyślny), EN.
+- Format dat w UI: PL: DD.MM.YYYY, EN: YYYY-MM-DD.
+- Treść powiadomień push i e-mail oraz raportów tygodniowych w języku wybranym w ustawieniach konta.
+- Teksty lokalizowane przez klucze (np. `inventory.addProduct.title`).
+- A11y: alternatywne opisy (alt) dla zdjęć kodów i dat (np. "Zdjęcie etykiety daty ważności").
+
+## 14. Priorytety funkcjonalności (P0 / P1 / P2)
+**P0 (Core MVP):** US-001, US-002, US-003, US-004, US-005, US-006, US-007, US-013, US-016, podstawowa analityka, retencja zdjęć, multi-język UI.
+**P1:** US-008 (lista zakupów), US-017 (interaktywna lista zakupów z draft), US-010 (ponowne użycie produktu), US-011 (raport zepsutych + e-mail), rozszerzone eventy analityczne, podstawowy rate limiting.
+**P2:** Offline dodawanie produktów, zaawansowana korekcja OCR, rozbudowana polityka powiadomień, rozbudowane raporty trendów marnowania.
+
+## 15. Słownik pojęć
+| Pojęcie | Definicja |
+|---------|-----------|
+| Produkt | Pozycja w inwentarzu zawierająca nazwę, datę ważności, statusy (opened/spoiled). |
+| Inwentarz | Lista wszystkich aktywnych produktów bieżącego gospodarstwa. |
+| `opened` | Flaga wskazująca, że produkt został otwarty – wpływa na dodatkowe przypomnienia. |
+| `spoiled` | Status oznaczający zepsuty produkt – generuje wpis do raportu. |
+| Lista zakupów (`ToBuy`) | Zbiór produktów przeniesionych po zużyciu w celu ponownego zakupu. |
+| Lista draft | Lista produktów zakupionych, oczekujących na uzupełnienie szczegółów (data ważności, ilość) przed dodaniem do inwentarza. |
+| Digest | Dzienne zestawienie e-mailem z produktami zbliżającymi się do końca ważności. |
+| Raport tygodniowy | Podsumowanie liczby zepsutych produktów w minionym tygodniu. |
+| Raport miesięczny | Podsumowanie liczby zepsutych produktów w minionym miesiącu, generowane na żądanie użytkownika. |
+| Raport roczny | Podsumowanie liczby zepsutych produktów w minionym roku, generowane na żądanie użytkownika. |
+| OCR | Mechanizm rozpoznawania tekstu na zdjęciu (Tesseract.js). |
+| Skanowanie kodu | Proces wykrycia i odczytu kodu kreskowego (QuaggaJS). |
+
+## 16. Decyzje końcowe (zamknięcie otwartych punktów)
+**Odświeżanie signed URL:** Transparentne – automatyczne żądanie nowego signed URL po wygaśnięciu (brak dodatkowej interakcji użytkownika). Timeout odświeżenia inicjowany przy błędzie 403 lub utracie obrazu.
+
+**Komunikacja limitu produktów:** Przy osiągnięciu 90% limitu (4 500 aktywnych) wyświetlany baner informacyjny + CTA do ewentualnego usuwania/oznaczania jako zużyte. Przy osiągnięciu 5 000 blokada dodawania z komunikatem i linkiem do pomocy.
+
+**Raport tygodniowy:** E-mail wysyłany tylko jeśli w danym tygodniu ≥1 produkt oznaczony jako `spoiled`. W przypadku braku zepsutych produktów – brak wysyłki; w UI widoczna informacja „Brak zepsutych produktów w ostatnim tygodniu”.
+
+Brak otwartych pytań dla MVP – dalsze rozszerzenia (tracking otwarć e-mail, offline queue) w backlogu P1/P2.
+
+
