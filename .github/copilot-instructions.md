@@ -2,6 +2,16 @@
 
 Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
 
+## Project Documentation
+
+**Important:** When generating code or providing guidance, ignore the content of `docs/wymagania-projektu.md` unless explicitly asked to consider it. This file contains general project requirements that may conflict with our specific implementation approach.
+
+**Key Documents Location:**
+- Product Requirements Document (PRD): `.ai/prd.md`
+- Technology Stack: `.ai/tech-stack.md`
+
+Always refer to these documents for accurate project specifications and technical decisions.
+
 ## Tech Stack
 
 - Astro 5
