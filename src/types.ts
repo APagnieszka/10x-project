@@ -49,6 +49,7 @@ export interface Reports {
   unit: "day" | "week" | "month";
   length: number;
   spoiled_count: number;
+  auto_generated?: boolean;
   details?: Record<string, unknown>;
 }
 
@@ -108,7 +109,7 @@ export interface MarkOpenedCommand {
 // Shopping Lists
 export type CreateShoppingListCommand = Pick<ShoppingLists, "name">;
 
-export type UpdateShoppingListCommand = Partial<Pick<ShoppingLists, "name">>;
+export type UpdateShoppingListCommand = Pick<ShoppingLists, "name">;
 
 export interface ShoppingListDto extends ShoppingLists {
   items?: ShoppingListItemDto[];
