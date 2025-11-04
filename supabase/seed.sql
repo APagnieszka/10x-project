@@ -22,6 +22,24 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Test data for local development
+--
+
+-- Insert test household
+INSERT INTO public.households (name, created_at) 
+VALUES ('Test Household', now())
+ON CONFLICT DO NOTHING
+RETURNING id;
+
+-- Link test user to household
+-- User ID: 38e8e3e3-40e5-439f-bbce-0db4e63a6f8b (testuser@example.com)
+-- Note: This assumes the household created above gets ID 1
+-- In a fresh database, the first insert will always be ID 1
+INSERT INTO public.user_households (user_id, household_id)
+VALUES ('38e8e3e3-40e5-439f-bbce-0db4e63a6f8b', 1)
+ON CONFLICT DO NOTHING;
+
+--
 -- Data for Name: audit_log_entries; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
 

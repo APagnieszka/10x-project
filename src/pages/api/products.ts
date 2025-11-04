@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
+import { createClient } from "@supabase/supabase-js";
 
+import type { Database } from "@/db/database.types";
 import { ProductsService } from "@/lib/services/products.service";
 import { createLogger } from "@/lib/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -70,12 +72,22 @@ export const POST: APIRoute = async ({ request, locals }) => {
     logger.addContext({ userId });
     logger.info("User authenticated successfully");
 
+    // Create a Supabase client with the user's JWT token
+    // This ensures RLS policies work correctly with auth.uid()
+    const userSupabase = createClient<Database>(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_KEY, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
+
     // Get household ID for rate limiting
     // We need the household ID early to enforce per-household rate limits
-    const productsService = new ProductsService(locals.supabase);
+    const productsService = new ProductsService(userSupabase);
     let householdId: number;
     try {
-      const { data: userHousehold, error: householdError } = await locals.supabase
+      const { data: userHousehold, error: householdError } = await userSupabase
         .from("user_households")
         .select("household_id")
         .eq("user_id", userId)
