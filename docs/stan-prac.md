@@ -11,13 +11,18 @@ Przygotowano Product Requirements Document (PRD) przy użyciu odpowiednich promp
 - Wykorzystano prompty z 10xRules.AI Prompt Library do przygotowania PRD i konfiguracji projektu.
 
 ## Wykorzystane Prompty
-- product-requirements-documentation.prompt.md
 - product-requirements-conversation.prompt.md
+- product-requirements-conversation-summary.prompt.md
 - product-requirements-tech-stack-analysis.prompt.md
+- product-requirements-documentation.prompt.md
 - supabase-integrate-with-astro.prompt.md
 - database-planning.prompt.md
+- database-planning-summarize.prompt.md
 - database-planning-create-entities.prompt.md
-- git-commit-push.prompt.md
+- supabase-finish-integration.prompt.md
+- api-plan.prompt.md
+- api-create-dto-commands.prompt.md
+
 
 ## Następny Krok
 Dodanie prompta i odpalenie do wygenerowania szczegółowego planu implementacji endpointa REST API. Wykorzystaj prompt z 10xRules.AI Prompt Library - Plan implementacji endpointa REST API.

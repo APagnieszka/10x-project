@@ -7,11 +7,11 @@ You are an AI assistant whose task is to help plan the database schema in Postgr
 Please carefully review the following information:
 
 <product_requirements>
-@prd.md
+#prd.md
 </product_requirements>
 
 <tech_stack>
-@tech-stack.md
+#tech-stack.md
 </tech_stack>
 
 Analyze the provided information, focusing on aspects important for database design. Consider the following issues:
