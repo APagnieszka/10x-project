@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { AuthForm } from "@/components/AuthForm";
+
+// Page metadata
+const pageTitle = "Create Account - Foodzilla";
+const pageDescription = "Create a new Foodzilla account to start managing your household inventory.";
+---
+
+<Layout title={pageTitle}>
+  <main class="min-h-screen bg-background flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <AuthForm mode="register" client:load />
+    </div>
+  </main>
+</Layout>
