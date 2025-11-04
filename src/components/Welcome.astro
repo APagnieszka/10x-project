@@ -15,77 +15,45 @@
           Aplikacja do zarządzania jedzeniem w lodówce, zbudowana z nowoczesnym stackiem:
         </p>
       </div>
-
-      <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
-          <h2
-            class="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
-          >
-            Core
-          </h2>
-          <ul class="space-y-3">
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">Astro v5.5.5</span>
-              <span class="text-blue-100/90">- Metaframework do aplikacji webowych</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">React v19</span>
-              <span class="text-blue-100/90">- Biblioteka UI do komponentów interaktywnych</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">TypeScript</span>
-              <span class="text-blue-100/90">- Typowanie statyczne</span>
-            </li>
-          </ul>
         </div>
 
-        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+      <div class="mt-12 text-center">
+        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-8 border border-white/10">
           <h2
-            class="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
+            class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
           >
-            Stylowanie
+            Rozpocznij zarządzanie jedzeniem
           </h2>
-          <ul class="space-y-3">
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm"
-                >Tailwind CSS v4</span
-              >
-              <span class="text-blue-100/90">- Utility-first CSS framework</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
-          <h2
-            class="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
-          >
-            Statyczna analiza kodu
-          </h2>
-          <ul class="space-y-3">
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">ESLint v9</span>
-              <span class="text-blue-100/90">- Lintowanie kodu</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">Prettier</span>
-              <span class="text-blue-100/90">- Formatowanie kodu</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm"
-                >Husky i Lint-staged</span
-              >
-              <span class="text-blue-100/90">- Automatyczna analiza kodu przed commitowaniem</span>
-            </li>
-          </ul>
+          <p class="text-blue-100/90 mb-8 text-lg">
+            Dodaj swoje pierwsze produkty do lodówki i nigdy więcej nie marnuj jedzenia!
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/products/add"
+              class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
+              </svg>
+              Dodaj produkt
+            </a>
+            <button
+              class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-200"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                ></path>
+              </svg>
+              Zobacz produkty
+            </button>
+          </div>
         </div>
       </div>
-
-      <p class="text-lg text-center text-blue-100/90 mt-8 leading-relaxed">
-        Starter zawiera wszystko, czego potrzebujesz do rozpoczęcia tworzenia <br class="hidden sm:block" />
-        <span class="font-semibold bg-gradient-to-r from-blue-200 to-purple-200 text-transparent bg-clip-text"
-          >nowoczesnych aplikacji webowych!</span
-        >
-      </p>
     </div>
   </div>
 </div>

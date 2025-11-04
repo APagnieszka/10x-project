@@ -96,4 +96,48 @@ export class ProductsService {
       main_image_url: data.main_image_url || undefined,
     };
   }
+
+  /**
+   * Get recent products for the household (last 10 added)
+   */
+  async getRecentProducts(userId: string, limit = 10): Promise<ProductDto[]> {
+    // Get household ID for the user
+    const householdId = await this.getHouseholdId(userId);
+
+    const { data, error } = await this.supabase
+      .from("products")
+      .select("*")
+      .eq("household_id", householdId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw new Error(`Failed to fetch recent products: ${error.message}`);
+    }
+
+    // Return formatted product DTOs
+    return data.map((product) => ({
+      id: product.id,
+      household_id: product.household_id,
+      name: product.name,
+      brand: product.brand || undefined,
+      barcode: product.barcode || undefined,
+      quantity: product.quantity,
+      unit: product.unit,
+      expiration_date: product.expiration_date,
+      status: product.status as "draft" | "active" | "spoiled",
+      opened: product.opened,
+      to_buy: product.to_buy,
+      opened_date: product.opened_date || undefined,
+      created_at: product.created_at,
+      main_image_url: product.main_image_url || undefined,
+    }));
+  }
+
+  /**
+   * Get household ID for the authenticated user (public method for API use)
+   */
+  async getHouseholdIdPublic(userId: string): Promise<number> {
+    return this.getHouseholdId(userId);
+  }
 }

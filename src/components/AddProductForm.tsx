@@ -1,25 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProductSchema, type CreateProductInput } from "@/lib/validation/products";
-import { supabaseClient } from "@/db/supabase.client";
+import { useProductForm } from "@/components/hooks/useProductForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { CreateProductCommand } from "@/types";
 
-interface AddProductFormProps {
-  onSuccess?: () => void;
-  onCancel?: () => void;
+interface ToastFunctions {
+  success: (title: string, description?: string) => void;
+  error: (title: string, description?: string) => void;
 }
 
-export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+interface AddProductFormProps {
+  initialData?: Partial<CreateProductCommand>;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  toast?: ToastFunctions;
+}
+
+export function AddProductForm({ initialData, onSuccess, onCancel, toast }: AddProductFormProps) {
+  const { isSubmitting, error, submitProduct } = useProductForm(toast);
 
   const {
     register,
@@ -27,54 +32,24 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<CreateProductInput>({
+  } = useForm({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
       status: "draft",
       opened: false,
       to_buy: false,
+      ...initialData,
+      unit: (initialData?.unit as "kg" | "g" | "l" | "ml" | "pcs") || undefined,
     },
   });
 
   const opened = watch("opened");
 
   const onSubmit = async (data: CreateProductInput) => {
-    setIsSubmitting(true);
-    setError(null);
+    const result = await submitProduct(data);
 
-    try {
-      // Get the current session
-      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
-
-      if (sessionError || !sessionData.session) {
-        throw new Error("You must be logged in to add a product");
-      }
-
-      const token = sessionData.session.access_token;
-
-      // Submit the form data
-      const response = await fetch("/api/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "Failed to add product");
-      }
-
-      const result = await response.json();
-      console.log("Product added successfully:", result);
-
+    if (result) {
       onSuccess?.();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -122,7 +97,7 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="unit">Unit *</Label>
-              <Select onValueChange={(value) => setValue("unit", value as any)}>
+              <Select onValueChange={(value) => setValue("unit", value as "kg" | "g" | "l" | "ml" | "pcs")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select unit" />
                 </SelectTrigger>
@@ -148,7 +123,10 @@ export function AddProductForm({ onSuccess, onCancel }: AddProductFormProps) {
           {/* Status */}
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <Select onValueChange={(value) => setValue("status", value as any)} defaultValue="draft">
+            <Select
+              onValueChange={(value) => setValue("status", value as "draft" | "active" | "spoiled")}
+              defaultValue="draft"
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

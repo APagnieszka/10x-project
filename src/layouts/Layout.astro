@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ToastWrapper } from "../components/ToastWrapper";
 
 interface Props {
   title?: string;
@@ -18,7 +19,9 @@ const { title = "Foodzilla" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <ToastWrapper client:load>
+      <slot />
+    </ToastWrapper>
   </body>
 </html>
 
