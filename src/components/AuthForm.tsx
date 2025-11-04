@@ -57,10 +57,12 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
       authError(error.message);
     } else {
       success(isLogin ? "Zalogowano pomyślnie" : isRegister ? "Konto utworzone" : "E-mail wysłany");
-      // Przekierowanie po sukcesie
+      // Przekierowanie po sukcesie - odczekaj chwilę na aktualizację stanu
       const urlParams = new URLSearchParams(window.location.search);
       const redirect = urlParams.get("redirect") || "/";
-      window.location.assign(redirect);
+      setTimeout(() => {
+        window.location.assign(redirect);
+      }, 100);
     }
   };
 

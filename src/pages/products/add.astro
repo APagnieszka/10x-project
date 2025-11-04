@@ -4,15 +4,19 @@ import { AddProductPage } from "@/components/AddProductPage";
 
 // Check authentication
 const supabase = Astro.locals.supabase;
+console.log(`[ADD.ASTRO] Checking session`);
 const {
-  data: { user },
+  data: { session },
   error: authError,
-} = await supabase.auth.getUser();
+} = await supabase.auth.getSession();
+console.log(`[ADD.ASTRO] Session result:`, { session: !!session, error: authError });
 
-if (authError || !user) {
+if (authError || !session) {
+  console.log(`[ADD.ASTRO] No session or error, redirecting to login`);
   // Redirect to login if not authenticated
-  return Astro.redirect("/auth/login");
+  return Astro.redirect("/login");
 }
+console.log(`[ADD.ASTRO] Session OK, proceeding`);
 
 // Page metadata
 const pageTitle = "Add Product - Foodzilla";
