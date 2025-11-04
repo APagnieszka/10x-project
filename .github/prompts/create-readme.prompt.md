@@ -7,16 +7,16 @@ You are an experienced developer whose task is to create a README.md file for a 
 Here are the project files to analyze:
 
 <prd>
-@prd.md
+#prd.md
 </prd>
 
 <tech_stack>
-@tech-stack.md
+#tech-stack.md
 </tech_stack>
 
 <dependencies>
-@package.json
-@.nvmrc
+#package.json
+#.nvmrc
 </dependencies>
 
 Your task is to create a README.md file with the following structure:
