@@ -44,33 +44,41 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   context.locals.supabase = supabase;
 
-  // Sprawdź sesję dla chronionych tras
-  if (context.url.pathname.startsWith("/products")) {
+  // Sprawdź sesję dla chronionych tras i API PRZED wywołaniem next()
+  if (context.url.pathname.startsWith("/products") || context.url.pathname.startsWith("/api/")) {
     console.log(`[MIDDLEWARE] Checking session for ${context.url.pathname}`);
     const {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
     console.log(`[MIDDLEWARE] Session result:`, { session: !!session, error: sessionError });
-    if (!session) {
-      console.log(`[MIDDLEWARE] No session, redirecting to login`);
-      const redirectUrl = `/login?redirect=${encodeURIComponent(context.url.pathname)}`;
-      return context.redirect(redirectUrl);
-    }
-    console.log(`[MIDDLEWARE] Session found, proceeding`);
-  }
 
-  // Server-side walidacja dla API
-  if (context.url.pathname.startsWith("/api/")) {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session || !userSchema.safeParse(session.user).success) {
+    if (!session) {
+      // Dla stron - przekieruj do logowania
+      if (context.url.pathname.startsWith("/products")) {
+        console.log(`[MIDDLEWARE] No session, redirecting to login`);
+        const redirectUrl = `/login?redirect=${encodeURIComponent(context.url.pathname)}`;
+        return context.redirect(redirectUrl);
+      }
+
+      // Dla API - zwróć 401
+      if (context.url.pathname.startsWith("/api/")) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Dodatkowa walidacja dla API
+    if (context.url.pathname.startsWith("/api/") && !userSchema.safeParse(session?.user).success) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    console.log(`[MIDDLEWARE] Session found, proceeding`);
   }
 
   return next();
