@@ -274,3 +274,39 @@ export interface ShoppingListSummaryDto {
   created_at: string;
   item_count: number;
 }
+
+// Auth-related types for UI components
+export interface UserHeaderProps {
+  userEmail: string;
+  householdName?: string;
+}
+
+export interface UserMenuProps {
+  userEmail: string;
+  householdName?: string;
+}
+
+// Extended registration input with household
+export interface RegisterWithHouseholdInput {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  householdName: string;
+}
+
+// Command for registering user with household creation
+export interface RegisterWithHouseholdCommand {
+  email: string;
+  password: string;
+  householdName: string;
+}
+
+// DTO returning user data with household information
+export interface UserWithHouseholdDto {
+  id: string;
+  email: string;
+  household: {
+    id: number;
+    name: string;
+  };
+}

@@ -301,6 +301,27 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 };
 
+export const HEAD: APIRoute = async () => {
+  // Simple health check endpoint that doesn't require authentication
+  // Used by client-side code to verify API connectivity
+  const logger = createLogger({
+    method: "HEAD",
+    path: "/api/products",
+    requestId: crypto.randomUUID(),
+  });
+
+  logger.info("Health check request received");
+
+  // Return 200 OK to indicate API is reachable
+  // No authentication required for HEAD requests
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Cache-Control": "no-cache",
+    },
+  });
+};
+
 export const GET: APIRoute = async ({ request, locals, url }) => {
   // Create logger with request context
   const logger = createLogger({
