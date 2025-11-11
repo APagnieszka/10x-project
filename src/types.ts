@@ -180,6 +180,7 @@ export interface LogBarcodeScanCommand {
   source?: string;
 }
 
+// [PRZEZNACZONE DO PRZYSZŁEJ WERSJI] OCR functionality
 export interface LogOcrCommand {
   confidence: number;
   detected_date?: string | null;
