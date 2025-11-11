@@ -11,7 +11,7 @@ interface ImageSourceSelectorProps {
 
 /**
  * ImageSourceSelector - allows user to choose between camera and gallery
- * Used for both OCR scanning and barcode scanning
+ * Used for barcode scanning
  */
 export function ImageSourceSelector({
   onSelectCamera,

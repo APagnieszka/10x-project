@@ -1,7 +1,9 @@
 # Dokument wymagań produktu (PRD) - Foodzilla
 
 ## 1. Przegląd produktu
-Foodzilla to aplikacja internetowa (PWA) zaprojektowana, aby pomóc gospodarstwom domowym w ograniczaniu marnowania żywności. Aplikacja umożliwia szybkie i łatwe dodawanie produktów spożywczych, śledzenie ich dat ważności oraz otrzymywanie powiadomień o zbliżającym się terminie przydatności do spożycia. Kluczowe funkcje MVP obejmują skanowanie kodów kreskowych w celu automatycznego pobierania informacji o produkcie, rozpoznawanie dat ważności ze zdjęć (OCR) oraz system powiadomień push i e-mail. Aplikacja jest dostępna w językach polskim i angielskim, z możliwością wyboru przez użytkownika, i zbudowana w oparciu o darmowe technologie, takie jak QuaggaJS, Tesseract.js i Supabase, co minimalizuje koszty operacyjne.
+Foodzilla to aplikacja internetowa (PWA) zaprojektowana, aby pomóc gospodarstwom domowym w ograniczaniu marnowania żywności. Aplikacja umożliwia szybkie i łatwe dodawanie produktów spożywczych, śledzenie ich dat ważności oraz otrzymywanie powiadomień o zbliżającym się terminie przydatności do spożycia. Kluczowe funkcje MVP obejmują skanowanie kodów kreskowych w celu automatycznego pobierania informacji o produkcie oraz system powiadomień push i e-mail. Aplikacja jest dostępna w językach polskim i angielskim, z możliwością wyboru przez użytkownika, i zbudowana w oparciu o darmowe technologie, takie jak QuaggaJS i Supabase, co minimalizuje koszty operacyjne.
+
+**Uwaga:** Funkcjonalność rozpoznawania dat ważności ze zdjęć (OCR) została przeznaczona do przyszłej wersji i nie jest częścią obecnego MVP. Użytkownicy będą musieli ręcznie wprowadzać daty ważności produktów.
 
 ## 2. Problem użytkownika
 Współczesne gospodarstwa domowe, w szczególności rodziny, często borykają się z problemem marnowania żywności. Produkty spożywcze, zwłaszcza te przechowywane w głębi lodówki lub szafek, są zapominane, a ich termin ważności upływa, zanim zostaną zużyte. Prowadzi to nie tylko do strat finansowych, ale także ma negatywny wpływ na środowisko. Brak prostego i szybkiego narzędzia do inwentaryzacji posiadanej żywności i monitorowania jej świeżości sprawia, że zarządzanie zapasami jest nieefektywne i czasochłonne.
@@ -12,8 +14,8 @@ Współczesne gospodarstwa domowe, w szczególności rodziny, często borykają 
 - **Dodawanie produktu:**
     - Skanowanie kodu kreskowego (za pomocą QuaggaJS) w celu automatycznego pobrania danych o produkcie z bazy Open Food Facts.
     - Ręczne wprowadzanie danych produktu jako alternatywa dla skanowania lub w przypadku braku produktu w bazie.
-    - Możliwość dodania zdjęcia daty ważności, która jest automatycznie rozpoznawana przez Tesseract.js (OCR). Data jest zapisywana automatycznie przy pewności ≥ 90%; w przeciwnym razie użytkownik jest proszony o potwierdzenie.
-    - Ręczne wprowadzanie daty z opcją użycia skrótów (np. "+1 tydzień").
+    - Ręczne wprowadzanie daty ważności z opcją użycia skrótów (np. "+1 tydzień").
+    - **[PRZEZNACZONE DO PRZYSZŁEJ WERSJI]** Możliwość dodania zdjęcia daty ważności, która jest automatycznie rozpoznawana przez Tesseract.js (OCR).
 - **Zarządzanie produktami:**
     - Oznaczanie produktu jako "otwarty" (`opened`) wraz z datą otwarcia (`opened_date`).
     - Przenoszenie produktu do listy zakupów (status `ToBuy`), co powoduje usunięcie go z inwentarza.
@@ -32,13 +34,14 @@ Współczesne gospodarstwa domowe, w szczególności rodziny, często borykają 
     - Zdjęcia kodów kreskowych i produktów są przechowywane bezterminowo.
     - Zdjęcia dat ważności są automatycznie usuwane po 100 dniach.
 - **Prywatność i analityka:**
-    - Zbieranie anonimowych zdarzeń (np. `product_added`, `ocr_success`, `product_spoiled`) w celu analizy użytkowania.
+    - Zbieranie anonimowych zdarzeń (np. `product_added`, `product_spoiled`) w celu analizy użytkowania.
     - Użytkownik jest informowany o zbieraniu danych podczas rejestracji i ma możliwość rezygnacji (opt-out).
 - **Obsługa konfliktów:** W przypadku jednoczesnej edycji tego samego produktu przez wielu użytkowników na wspólnym koncie, stosowana jest strategia "last-write-wins".
 - **Wybór języka:** Użytkownicy mogą wybrać język aplikacji między polskim a angielskim. Domyślnie ustawiony jest język polski.
 
 ## 4. Granice projektu
 Wersja MVP nie obejmuje następujących funkcji:
+- **Rozpoznawania dat ważności ze zdjęć (OCR)** - funkcjonalność zaplanowana na przyszłe wersje.
 - Integracji z inteligentnymi urządzeniami (np. lodówkami).
 - Zaawansowanej analityki i personalizowanych rekomendacji (oprócz eksperymentalnego generowania przepisów w P2).
 - Synchronizacji między wieloma kontami użytkowników w ramach jednego gospodarstwa (MVP zakłada jedno wspólne konto).
@@ -76,16 +79,12 @@ Wersja MVP nie obejmuje następujących funkcji:
     - Jeśli produkt nie zostanie znaleziony, użytkownik jest informowany i może wprowadzić dane ręcznie.
 
 - **ID:** US-004
-- **Tytuł:** Dodawanie daty ważności za pomocą OCR
-- **Priorytet:** P0
+- **Tytuł:** [PRZEZNACZONE DO PRZYSZŁEJ WERSJI] Dodawanie daty ważności za pomocą OCR
+- **Priorytet:** P2 (poza zakresem MVP)
 - **Opis:** Jako użytkownik, chcę zrobić zdjęcie etykiety z datą ważności, aby system automatycznie ją rozpoznał i wypełnił odpowiednie pole.
-- **Kryteria akceptacji:**
-    - Użytkownik może zrobić zdjęcie lub wybrać je z galerii.
-    - OCR (Tesseract.js) analizuje obraz i próbuje rozpoznać datę w formacie YYYY-MM-DD.
-    - Jeśli pewność rozpoznania jest ≥ 90%, data jest automatycznie zapisywana.
-    - Jeśli pewność jest < 90%, data jest proponowana użytkownikowi do potwierdzenia lub ręcznej korekty.
+- **Status:** Funkcjonalność zaplanowana na przyszłe wersje. W obecnej wersji MVP użytkownik musi ręcznie wprowadzać daty ważności.
 
-- **ID:** US-005
+- **ID:** US-004a
 - **Tytuł:** Ręczne dodawanie produktu
 - **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę mieć możliwość ręcznego dodania produktu, który nie ma kodu kreskowego (np. warzywa) lub nie został znaleziony w bazie.
@@ -94,8 +93,6 @@ Wersja MVP nie obejmuje następujących funkcji:
     - Użytkownik może ręcznie wprowadzić datę ważności lub użyć skrótów (+1 tydzień, +1 miesiąc).
     - Użytkownik może wybrać produkt z listy ulubionych, co wstępnie wypełnia formularz nazwą i marką.
     - Po wypełnieniu wymaganych pól, produkt jest dodawany do inwentarza.
-
-- **ID:** US-006
 - **Tytuł:** Otrzymywanie powiadomień o zbliżającej się dacie ważności
 - **Priorytet:** P0
 - **Opis:** Jako użytkownik, chcę otrzymywać powiadomienia (push i e-mail), gdy data ważności produktu zbliża się ku końcowi, aby zdążyć go zużyć.
