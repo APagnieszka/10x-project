@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   loginSchema,
-  registerSchema,
+  registerWithHouseholdSchema,
   resetPasswordSchema,
   type LoginInput,
-  type RegisterInput,
+  type RegisterWithHouseholdInput,
   type ResetPasswordInput,
 } from "@/lib/validation/auth";
 import { Button } from "@/components/ui/button";
@@ -31,24 +31,28 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
   const isRegister = mode === "register";
   const isReset = mode === "reset";
 
-  const schema = isLogin ? loginSchema : isRegister ? registerSchema : resetPasswordSchema;
+  const schema = isLogin ? loginSchema : isRegister ? registerWithHouseholdSchema : resetPasswordSchema;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginInput | RegisterInput | ResetPasswordInput>({
+  } = useForm<LoginInput | RegisterWithHouseholdInput | ResetPasswordInput>({
     resolver: zodResolver(schema),
   });
 
   const formErrors = errors as Record<string, { message?: string }>; // Type assertion for union types
 
-  const onFormSubmit = async (data: LoginInput | RegisterInput | ResetPasswordInput) => {
+  const onFormSubmit = async (data: LoginInput | RegisterWithHouseholdInput | ResetPasswordInput) => {
     let error;
     if (isLogin) {
       error = await login((data as LoginInput).email, (data as LoginInput).password);
     } else if (isRegister) {
-      error = await authRegister((data as RegisterInput).email, (data as RegisterInput).password);
+      error = await authRegister(
+        (data as RegisterWithHouseholdInput).email,
+        (data as RegisterWithHouseholdInput).password,
+        (data as RegisterWithHouseholdInput).householdName
+      );
     } else if (isReset) {
       error = await resetPassword((data as ResetPasswordInput).email);
     }
@@ -110,6 +114,19 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
               {formErrors.confirmPassword && (
                 <p className="text-sm text-red-600">{formErrors.confirmPassword.message}</p>
               )}
+            </div>
+          )}
+
+          {/* Household Name - only for register */}
+          {isRegister && (
+            <div className="space-y-2">
+              <Label htmlFor="householdName">Nazwa gospodarstwa *</Label>
+              <Input id="householdName" {...register("householdName")} placeholder="np. Rodzina Kowalskich" />
+              {formErrors.householdName && <p className="text-sm text-red-600">{formErrors.householdName.message}</p>}
+              <p className="text-xs text-muted-foreground">
+                Na razie każdy użytkownik tworzy własne gospodarstwo. Możliwość zapraszania znajomych będzie dostępna
+                wkrótce.
+              </p>
             </div>
           )}
 

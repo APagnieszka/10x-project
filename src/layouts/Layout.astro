@@ -1,12 +1,35 @@
 ---
 import "../styles/global.css";
 import { ToastWrapper } from "../components/ToastWrapper";
+import Header from "../components/Header.astro";
 
 interface Props {
   title?: string;
 }
 
 const { title = "Foodzilla" } = Astro.props;
+
+// Check for authenticated session
+const {
+  data: { session },
+} = await Astro.locals.supabase.auth.getSession();
+
+// Get household data if user is authenticated
+let householdName: string | undefined;
+let userEmail: string | undefined;
+if (session?.user) {
+  userEmail = session.user.email ?? undefined;
+  const { data: householdData } = await Astro.locals.supabase
+    .from("user_households")
+    .select("household_id, households(name)")
+    .eq("user_id", session.user.id)
+    .single();
+
+  // Supabase returns nested data as an object, not an array
+  if (householdData?.households) {
+    householdName = (householdData.households as { name: string }).name;
+  }
+}
 ---
 
 <!doctype html>
@@ -19,6 +42,7 @@ const { title = "Foodzilla" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    {userEmail && <Header userEmail={userEmail} householdName={householdName} />}
     <ToastWrapper client:load>
       <slot />
     </ToastWrapper>
