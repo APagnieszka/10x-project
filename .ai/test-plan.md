@@ -80,6 +80,15 @@ Cele szczegółowe:
 - **Narzędzie do testów wizualnej regresji:** Playwright lub Chromatic
 - **Narzędzie do inspekcji API:** Postman / cURL
 
+### 6.1. Uzasadnienie wyboru narzędzi
+
+- **Vitest:** Wybrany jako framework do testów jednostkowych i integracyjnych ze względu na szybką konfigurację, natywną obsługę TypeScript oraz doskonałą integrację z Astro i React. Jest lżejszy niż Jest i lepiej przystosowany do nowoczesnych środowisk deweloperskich.
+- **React Testing Library:** Idealne do testowania komponentów React, ponieważ skupia się na testowaniu zachowania użytkownika, a nie implementacji. Zapewnia testy, które są odporne na refaktoryzację i promują dobre praktyki dostępności.
+- **Playwright:** Wybrany dla testów E2E ze względu na obsługę wielu przeglądarek (Chrome, Firefox, Safari), możliwość testowania na urządzeniach mobilnych oraz wbudowane narzędzia do wizualnej regresji. Jest szybszy i bardziej niezawodny niż Cypress, szczególnie dla aplikacji z dynamicznym routingiem (Astro).
+- **k6:** Narzędzie do testów wydajności API, które pozwala na symulację dużego obciążenia i pomiar czasu odpowiedzi. Łatwe w integracji z CI/CD i generuje szczegółowe raporty.
+- **Playwright (wizualna regresja):** Używany zamiast Chromatic, ponieważ jest już częścią stosu technologicznego dla E2E, co zmniejsza liczbę narzędzi do nauki i utrzymania. Chromatic jest lepszy dla projektów z Storybook, ale tutaj Playwright wystarczy do porównywania zrzutów ekranu.
+- **Postman / cURL:** Postman dla interaktywnego testowania API, cURL dla skryptów automatyzacyjnych. Oba są standardowymi narzędziami w branży.
+
 ## 7. Harmonogram testów
 
 - **Faza 1: Testy jednostkowe i integracyjne (ciągłe):** Równolegle z procesem deweloperskim.
