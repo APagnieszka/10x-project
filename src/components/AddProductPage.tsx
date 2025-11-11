@@ -35,7 +35,7 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
     detectedDate: string | null;
     confidence: number;
   } | null>(null);
-  const [isLoadingProductData, setIsLoadingProductData] = useState(false);
+  const [_isLoadingProductData, setIsLoadingProductData] = useState(false);
   const [isOcrProcessing, setIsOcrProcessing] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
 
