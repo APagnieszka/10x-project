@@ -394,7 +394,27 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
 
     // Get household ID
     const productsService = new ProductsService(userSupabase);
-    const householdId = await productsService.getHouseholdIdPublic(userId);
+    let householdId: number;
+
+    try {
+      householdId = await productsService.getHouseholdIdPublic(userId);
+    } catch {
+      // User is not a member of any household - return empty list
+      logger.info("User is not a member of any household, returning empty list", { userId });
+      return new Response(
+        JSON.stringify({
+          data: [],
+          pagination: {
+            limit,
+            total: 0,
+          },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
     // Fetch products
     const { data, error } = await userSupabase
