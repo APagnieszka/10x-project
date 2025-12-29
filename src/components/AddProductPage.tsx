@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AddProductForm } from "./AddProductForm";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { FavoritesList } from "./FavoritesList";
@@ -22,6 +22,7 @@ interface AddProductPageProps {
  * Manages the overall state and navigation between different views
  */
 export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
+  const [isHydrated, setIsHydrated] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>("form");
   const [formData, setFormData] = useState<Partial<CreateProductCommand>>({
     status: "draft",
@@ -32,6 +33,10 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
   const [showFavorites, setShowFavorites] = useState(false);
 
   const { success: showSuccessToast, error: showErrorToast } = useToast();
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Handle barcode detection and Open Food Facts lookup
   const handleBarcodeDetected = useCallback(
@@ -129,7 +134,7 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
   const handleBarcodeCancel = useCallback(() => setCurrentView("form"), []);
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8" data-hydrated={isHydrated ? "true" : "false"}>
       <div className="container mx-auto max-w-4xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground">Dodaj nowy produkt</h1>
