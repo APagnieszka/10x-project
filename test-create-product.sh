@@ -2,29 +2,41 @@
 
 # Test script for POST /api/products endpoint
 # Make sure the dev server is running: npm run dev
-# And Supabase is running: bash scripts/start-supabase.sh
 
-# Load test user credentials from .env.local
-if [ -f .env.local ]; then
-  export $(grep -v '^#' .env.local | xargs)
-fi
+set -euo pipefail
 
-if [ -z "$TEST_USER_EMAIL" ] || [ -z "$TEST_USER_PASSWORD" ]; then
-  echo "Error: TEST_USER_EMAIL and TEST_USER_PASSWORD must be set in .env.local"
+load_env_file() {
+  local env_file="$1"
+  if [ ! -f "$env_file" ]; then
+    return 0
+  fi
+
+  set -a
+  # shellcheck disable=SC1090
+  source "$env_file"
+  set +a
+}
+
+# Prefer local-only E2E file; fallback to .env.local
+load_env_file .env.e2e.local
+load_env_file .env.local
+
+if [ -z "${TEST_USER_EMAIL:-}" ] || [ -z "${TEST_USER_PASSWORD:-}" ]; then
+  echo "Error: TEST_USER_EMAIL and TEST_USER_PASSWORD must be set (recommended: .env.e2e.local)"
   exit 1
 fi
 
-# Get Supabase ANON_KEY
-ANON_KEY=$(supabase status -o env 2>/dev/null | grep ANON_KEY | cut -d'=' -f2 | tr -d '"')
-
-if [ -z "$ANON_KEY" ]; then
-  echo "Error: Could not get Supabase ANON_KEY. Make sure Supabase is running (bash scripts/start-supabase.sh)"
+if [ -z "${PUBLIC_SUPABASE_URL:-}" ] || [ -z "${PUBLIC_SUPABASE_KEY:-}" ]; then
+  echo "Error: PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_KEY must be set (recommended: .env.e2e.local)"
   exit 1
 fi
+
+SUPABASE_AUTH_URL="${PUBLIC_SUPABASE_URL%/}/auth/v1/token?grant_type=password"
+ANON_KEY="$PUBLIC_SUPABASE_KEY"
 
 # Login and get JWT token
 echo "Logging in as ${TEST_USER_EMAIL}..."
-LOGIN_RESPONSE=$(curl -s -X POST http://127.0.0.1:54321/auth/v1/token?grant_type=password \
+LOGIN_RESPONSE=$(curl -s -X POST "$SUPABASE_AUTH_URL" \
   -H "Content-Type: application/json" \
   -H "apikey: ${ANON_KEY}" \
   -d "{\"email\": \"${TEST_USER_EMAIL}\", \"password\": \"${TEST_USER_PASSWORD}\"}")
@@ -40,7 +52,7 @@ fi
 echo "Successfully logged in!"
 echo ""
 
-BASE_URL="http://localhost:3000"
+BASE_URL="${DEV_SERVER_BASE_URL:-http://localhost:4321}"
 ENDPOINT="${BASE_URL}/api/products"
 
 echo "=========================================="

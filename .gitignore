@@ -17,6 +17,10 @@ pnpm-debug.log*
 .env
 .env.production
 .env.local
+.env.test
+
+# local-only e2e credentials (never commit)
+.env.e2e.local
 
 # macOS-specific files
 .DS_Store
