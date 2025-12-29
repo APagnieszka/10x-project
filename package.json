@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "test": "vitest"
+    "test": "vitest",
+    "check:mvp": "npx @modelcontextprotocol/inspector --cli --config .vscode/mcp.json --method tools/call --tool-name check-mvp --tool-arg projectPath=$PWD"
   },
   "dependencies": {
     "@astrojs/node": "^9.4.4",
