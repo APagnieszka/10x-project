@@ -51,7 +51,9 @@ describe("FavoritesList", () => {
     mockGetRecentProducts.mockResolvedValue(mockProducts);
 
     // FavoritesList first checks connectivity via a HEAD request.
-    global.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200 } as any);
+    global.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: true, status: 200 } as unknown as Response) as unknown as typeof fetch;
   });
 
   afterEach(() => {

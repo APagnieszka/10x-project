@@ -3,6 +3,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface Props {
   children: ReactNode;
@@ -31,7 +32,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    logger.error("ErrorBoundary caught an error", error, {
+      componentStack: errorInfo.componentStack,
+    });
 
     // Call optional error handler
     if (this.props.onError) {

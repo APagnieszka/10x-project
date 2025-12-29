@@ -40,4 +40,3 @@ export const authErrorMessages: Record<string, { pl: string; en: string }> = {
 export function getAuthErrorMessage(errorCode: string, language: "pl" | "en" = "pl"): string {
   return authErrorMessages[errorCode]?.[language] || authErrorMessages.default[language];
 }
-
