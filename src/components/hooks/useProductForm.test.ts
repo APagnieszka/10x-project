@@ -147,7 +147,7 @@ describe("useProductForm", () => {
       await result.current.submitProduct(mockProductData);
     });
 
-    expect(result.current.error).toBe("An unexpected error occurred");
+    expect(result.current.error).toBe("Wystąpił nieoczekiwany błąd");
   });
 
   it("resets state on new submission", async () => {

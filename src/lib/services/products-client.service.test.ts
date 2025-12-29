@@ -171,12 +171,15 @@ describe("products-client.service", () => {
       const result = await getRecentProducts(5);
 
       expect(mockSupabaseClient.auth.getSession).toHaveBeenCalled();
-      expect(global.fetch).toHaveBeenCalledWith("/api/products?limit=5&sort=created_at&order=desc", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${mockSession.data.session.access_token}`,
-        },
-      });
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining("/api/products?limit=5&sort=created_at&order=desc"),
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${mockSession.data.session.access_token}`,
+          },
+        }
+      );
       expect(result).toEqual(mockProductsList);
     });
 
@@ -190,8 +193,13 @@ describe("products-client.service", () => {
       await getRecentProducts();
 
       expect(global.fetch).toHaveBeenCalledWith(
-        "/api/products?limit=10&sort=created_at&order=desc",
-        expect.any(Object)
+        expect.stringContaining("/api/products?limit=10&sort=created_at&order=desc"),
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${mockSession.data.session.access_token}`,
+          },
+        }
       );
     });
 

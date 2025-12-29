@@ -77,13 +77,13 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
           (err) => {
             if (err) {
               const errorMessage = err.message?.includes("Permission denied")
-                ? "Camera access denied. Please grant camera permissions and try again."
+                ? "Brak dostępu do aparatu. Przyznaj uprawnienia i spróbuj ponownie."
                 : err.message?.includes("NotFoundError")
-                  ? "No camera found. Please check your camera connection."
-                  : `Failed to access camera (${retryCount + 1}/${maxRetries}). Please try again.`;
+                  ? "Nie znaleziono aparatu. Sprawdź, czy kamera jest dostępna."
+                  : `Nie udało się uruchomić aparatu (${retryCount + 1}/${maxRetries}). Spróbuj ponownie.`;
 
               setError(errorMessage);
-              toast?.error("Camera Error", errorMessage);
+              toast?.error("Błąd aparatu", errorMessage);
               setIsInitializing(false);
               return;
             }
@@ -98,7 +98,7 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
           if (result.codeResult && result.codeResult.code) {
             const code = result.codeResult.code;
             setDetectedBarcode(code);
-            toast?.success("Barcode Scanned", `Detected barcode: ${code}`);
+            toast?.success("Kod zeskanowany", `Wykryto kod: ${code}`);
 
             // Stop scanner and notify parent
             Quagga.stop();
@@ -108,11 +108,11 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
       } catch (err) {
         const errorMessage =
           err instanceof Error && err.message.includes("getUserMedia")
-            ? "Camera access failed. Please check permissions and try again."
-            : `Scanner setup failed (${retryCount + 1}/${maxRetries}). Please try again.`;
+            ? "Nie udało się uzyskać dostępu do aparatu. Sprawdź uprawnienia i spróbuj ponownie."
+            : `Nie udało się uruchomić skanera (${retryCount + 1}/${maxRetries}). Spróbuj ponownie.`;
 
         setError(errorMessage);
-        toast?.error("Scanner Setup Failed", errorMessage);
+        toast?.error("Nie udało się uruchomić skanera", errorMessage);
         setIsInitializing(false);
       }
     },
@@ -145,11 +145,11 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
           if (result && result.codeResult && result.codeResult.code) {
             const code = result.codeResult.code;
             setDetectedBarcode(code);
-            toast?.success("Barcode Detected", `Found barcode: ${code}`);
+            toast?.success("Wykryto kod", `Znaleziono kod: ${code}`);
           } else {
-            const errorMsg = "No barcode found in the selected image. Please try another image.";
+            const errorMsg = "Nie znaleziono kodu na wybranym zdjęciu. Spróbuj innego zdjęcia.";
             setError(errorMsg);
-            toast?.error("No Barcode Found", errorMsg);
+            toast?.error("Nie znaleziono kodu", errorMsg);
           }
         }
       );
@@ -165,8 +165,8 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
 
       // Check if file is an image
       if (!file.type.startsWith("image/")) {
-        setError("Please select a valid image file.");
-        toast?.error("Invalid File", "Please select a valid image file.");
+        setError("Wybierz poprawny plik obrazu.");
+        toast?.error("Nieprawidłowy plik", "Wybierz poprawny plik obrazu.");
         return;
       }
 
@@ -179,9 +179,9 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
         }
       };
       reader.onerror = () => {
-        const errorMsg = "Failed to read the selected image. Please try again.";
+        const errorMsg = "Nie udało się odczytać wybranego zdjęcia. Spróbuj ponownie.";
         setError(errorMsg);
-        toast?.error("Read Error", errorMsg);
+        toast?.error("Błąd odczytu", errorMsg);
       };
       reader.readAsDataURL(file);
     },
@@ -239,7 +239,7 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
         accept="image/*"
         onChange={handleFileSelect}
         className="hidden"
-        aria-label="Select image from gallery"
+        aria-label="Wybierz zdjęcie z galerii"
       />
 
       {/* Source selection view */}
@@ -248,8 +248,8 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
           onSelectCamera={handleSelectCamera}
           onSelectGallery={handleSelectGallery}
           onCancel={onCancel}
-          title="Scan Barcode"
-          description="Choose how you want to scan the barcode - use camera or select an existing image."
+          title="Skanuj kod kreskowy"
+          description="Wybierz sposób skanowania kodu: użyj aparatu albo wybierz istniejące zdjęcie."
         />
       )}
 
@@ -278,17 +278,17 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
             <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-6 pointer-events-auto">
               <div className="max-w-2xl mx-auto">
                 <h2 className="text-white text-xl font-semibold mb-2">
-                  {viewMode === "camera" ? "Scan Barcode" : "Processing Image"}
+                  {viewMode === "camera" ? "Skanuj kod kreskowy" : "Przetwarzanie zdjęcia"}
                 </h2>
                 <div className="text-white/80 text-sm space-y-1">
                   {viewMode === "camera" && (
                     <>
-                      <p>• Position the barcode within the frame</p>
-                      <p>• Ensure good lighting</p>
-                      <p>• Hold the camera steady</p>
+                      <p>• Ustaw kod w ramce</p>
+                      <p>• Zadbaj o dobre oświetlenie</p>
+                      <p>• Trzymaj aparat nieruchomo</p>
                     </>
                   )}
-                  {viewMode === "gallery" && <p>• Analyzing image for barcode...</p>}
+                  {viewMode === "gallery" && <p>• Analizuję zdjęcie w poszukiwaniu kodu...</p>}
                 </div>
               </div>
             </div>
@@ -325,7 +325,7 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
                         size="sm"
                         className="bg-white/20 border-white/40 text-white hover:bg-white/30"
                       >
-                        Try Again ({retryCount + 1}/{maxRetries})
+                        Spróbuj ponownie ({retryCount + 1}/{maxRetries})
                       </Button>
                     )}
                   </Card>
@@ -343,7 +343,7 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
                 {isInitializing && (
                   <Card className="bg-white/90 p-4">
                     <p className="text-gray-800 text-sm">
-                      {viewMode === "camera" ? "Initializing camera..." : "Processing image..."}
+                      {viewMode === "camera" ? "Uruchamianie aparatu..." : "Przetwarzanie zdjęcia..."}
                     </p>
                   </Card>
                 )}
@@ -366,7 +366,7 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
                   className="w-full bg-white/90 hover:bg-white"
                   size="lg"
                 >
-                  Cancel
+                  Anuluj
                 </Button>
               </div>
             </div>
