@@ -2,16 +2,23 @@ import { describe, expect, it } from "vitest";
 
 import { createProductSchema } from "./products";
 
+function formatDateYYYYMMDD(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
 describe("createProductSchema", () => {
   describe("valid inputs", () => {
     it("should validate a complete valid product", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const validProduct = {
         name: "Milk",
         brand: "Dairy Farm",
         barcode: "1234567890",
         quantity: 1.5,
         unit: "l",
-        expiration_date: "2025-12-31",
+        expiration_date: formatDateYYYYMMDD(future),
         status: "active",
         opened: false,
         to_buy: false,
@@ -28,11 +35,14 @@ describe("createProductSchema", () => {
     });
 
     it("should validate minimal required fields", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const minimalProduct = {
         name: "Bread",
         quantity: 2,
         unit: "pcs",
-        expiration_date: "2025-11-15",
+        expiration_date: formatDateYYYYMMDD(future),
       };
 
       const result = createProductSchema.safeParse(minimalProduct);
@@ -47,12 +57,16 @@ describe("createProductSchema", () => {
     it("should accept all valid units", () => {
       const units = ["kg", "g", "l", "ml", "pcs"];
 
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+      const expiration_date = formatDateYYYYMMDD(future);
+
       units.forEach((unit) => {
         const product = {
           name: "Test Product",
           quantity: 1,
           unit,
-          expiration_date: "2025-12-31",
+          expiration_date,
         };
 
         const result = createProductSchema.safeParse(product);
@@ -63,12 +77,16 @@ describe("createProductSchema", () => {
     it("should accept all valid statuses", () => {
       const statuses = ["draft", "active", "spoiled"];
 
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+      const expiration_date = formatDateYYYYMMDD(future);
+
       statuses.forEach((status) => {
         const product = {
           name: "Test Product",
           quantity: 1,
           unit: "pcs",
-          expiration_date: "2025-12-31",
+          expiration_date,
           status,
         };
 
@@ -78,11 +96,14 @@ describe("createProductSchema", () => {
     });
 
     it("should validate product with opened=true and opened_date", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const product = {
         name: "Yogurt",
         quantity: 1,
         unit: "pcs",
-        expiration_date: "2025-11-10",
+        expiration_date: formatDateYYYYMMDD(future),
         opened: true,
         opened_date: new Date().toISOString(),
       };
@@ -106,11 +127,14 @@ describe("createProductSchema", () => {
     });
 
     it("should reject empty name", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const product = {
         name: "",
         quantity: 1,
         unit: "pcs",
-        expiration_date: "2025-12-31",
+        expiration_date: formatDateYYYYMMDD(future),
       };
 
       const result = createProductSchema.safeParse(product);
@@ -123,11 +147,14 @@ describe("createProductSchema", () => {
     });
 
     it("should reject name longer than 255 characters", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const product = {
         name: "A".repeat(256),
         quantity: 1,
         unit: "pcs",
-        expiration_date: "2025-12-31",
+        expiration_date: formatDateYYYYMMDD(future),
       };
 
       const result = createProductSchema.safeParse(product);
@@ -141,12 +168,16 @@ describe("createProductSchema", () => {
     it("should reject zero or negative quantity", () => {
       const invalidQuantities = [0, -1, -10.5];
 
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+      const expiration_date = formatDateYYYYMMDD(future);
+
       invalidQuantities.forEach((quantity) => {
         const product = {
           name: "Test Product",
           quantity,
           unit: "pcs",
-          expiration_date: "2025-12-31",
+          expiration_date,
         };
 
         const result = createProductSchema.safeParse(product);
@@ -159,11 +190,14 @@ describe("createProductSchema", () => {
     });
 
     it("should reject invalid unit", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const product = {
         name: "Test Product",
         quantity: 1,
         unit: "invalid_unit",
-        expiration_date: "2025-12-31",
+        expiration_date: formatDateYYYYMMDD(future),
       };
 
       const result = createProductSchema.safeParse(product);
@@ -191,11 +225,14 @@ describe("createProductSchema", () => {
     });
 
     it("should reject past expiration_date", () => {
+      const past = new Date();
+      past.setDate(past.getDate() - 7);
+
       const product = {
         name: "Test Product",
         quantity: 1,
         unit: "pcs",
-        expiration_date: "2020-01-01",
+        expiration_date: formatDateYYYYMMDD(past),
       };
 
       const result = createProductSchema.safeParse(product);
@@ -207,11 +244,14 @@ describe("createProductSchema", () => {
     });
 
     it("should reject invalid status", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const product = {
         name: "Test Product",
         quantity: 1,
         unit: "pcs",
-        expiration_date: "2025-12-31",
+        expiration_date: formatDateYYYYMMDD(future),
         status: "invalid_status",
       };
 
@@ -220,11 +260,14 @@ describe("createProductSchema", () => {
     });
 
     it("should reject opened=true without opened_date", () => {
+      const future = new Date();
+      future.setDate(future.getDate() + 7);
+
       const product = {
         name: "Test Product",
         quantity: 1,
         unit: "pcs",
-        expiration_date: "2025-12-31",
+        expiration_date: formatDateYYYYMMDD(future),
         opened: true,
       };
 

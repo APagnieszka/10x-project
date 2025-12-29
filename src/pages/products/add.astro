@@ -1,0 +1,36 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { AddProductPage } from "@/components/AddProductPage";
+
+// Check authentication
+const supabase = Astro.locals.supabase;
+const {
+  data: { session },
+  error: authError,
+} = await supabase.auth.getSession();
+
+if (authError || !session) {
+  // Redirect to login if not authenticated
+  return Astro.redirect("/login");
+}
+
+// Page metadata
+const pageTitle = "Add Product - Foodzilla";
+const pageDescription =
+  "Add a new product to your household inventory by scanning barcode, taking photo of expiration date, or entering data manually.";
+---
+
+<Layout title={pageTitle}>
+  <main class="min-h-screen bg-background">
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight mb-2">Add Product</h1>
+        <p class="text-muted-foreground">
+          {pageDescription}
+        </p>
+      </header>
+
+      <AddProductPage client:load />
+    </div>
+  </main>
+</Layout>

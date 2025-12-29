@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { AuthForm } from "@/components/AuthForm";
+
+// Page metadata
+const pageTitle = "Sign In - Foodzilla";
+const _pageDescription = "Sign in to your Foodzilla account to manage your household inventory.";
+---
+
+<Layout title={pageTitle}>
+  <main class="min-h-screen bg-background flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <AuthForm mode="login" client:load />
+    </div>
+  </main>
+</Layout>
