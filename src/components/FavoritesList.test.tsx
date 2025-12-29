@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor, within, act } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { FavoritesList } from "./FavoritesList";
 
 // Mock the products client service
@@ -49,6 +49,14 @@ describe("FavoritesList", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetRecentProducts.mockResolvedValue(mockProducts);
+
+    // FavoritesList first checks connectivity via a HEAD request.
+    global.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200 } as any);
+  });
+
+  afterEach(() => {
+    // Ensure fake timers from any test don't leak and break Testing Library polling.
+    vi.useRealTimers();
   });
 
   it("does not render when isVisible is false", () => {
@@ -79,8 +87,14 @@ describe("FavoritesList", () => {
 
     expect(screen.getByText("Dairy Farm")).toBeInTheDocument();
     expect(screen.getByText("1 l")).toBeInTheDocument();
-    expect(screen.getByText("Expires: 12/15/2025")).toBeInTheDocument();
-    expect(screen.getByText("active")).toBeInTheDocument();
+
+    const expectedDate = new Date(mockProducts[0].expiration_date).toLocaleDateString();
+    expect(screen.getByText(`Expires: ${expectedDate}`)).toBeInTheDocument();
+
+    const milkTitle = screen.getByText("Milk");
+    const milkCard = milkTitle.closest('[data-slot="card"]');
+    expect(milkCard).toBeTruthy();
+    expect(within(milkCard as HTMLElement).getByText("active")).toBeInTheDocument();
   });
 
   it("shows product image when available", async () => {
@@ -102,8 +116,13 @@ describe("FavoritesList", () => {
       expect(screen.getByText("Bread")).toBeInTheDocument();
     });
 
-    expect(screen.queryByText("Dairy Farm")).not.toBeInTheDocument();
-    expect(screen.queryByAltText("Bread")).not.toBeInTheDocument();
+    const breadTitle = screen.getByText("Bread");
+    const breadCard = breadTitle.closest('[data-slot="card"]');
+    expect(breadCard).toBeTruthy();
+
+    const breadScope = within(breadCard as HTMLElement);
+    expect(breadScope.queryByText("Dairy Farm")).not.toBeInTheDocument();
+    expect(breadScope.queryByRole("img", { name: "Bread" })).not.toBeInTheDocument();
   });
 
   it("calls onSelectProduct when product is clicked", async () => {
@@ -113,10 +132,7 @@ describe("FavoritesList", () => {
       expect(screen.getByText("Milk")).toBeInTheDocument();
     });
 
-    const milkCard = screen.getByText("Milk").closest("div");
-    if (milkCard) {
-      fireEvent.click(milkCard);
-    }
+    fireEvent.click(screen.getByText("Milk"));
 
     expect(mockOnSelectProduct).toHaveBeenCalledWith(mockProducts[0]);
   });
@@ -142,12 +158,24 @@ describe("FavoritesList", () => {
 
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={true} />);
 
+    // Wait with real timers (Testing Library polling relies on timers).
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
     const tryAgainButton = screen.getByRole("button", { name: /try again/i });
+
+    // Switch to fake timers only for the backoff delay.
+    vi.useFakeTimers();
     fireEvent.click(tryAgainButton);
+
+    // Retry uses exponential backoff: first retry happens after 1s.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+
+    // Switch back so Testing Library polling works normally.
+    vi.useRealTimers();
 
     await waitFor(() => {
       expect(screen.getByText("Milk")).toBeInTheDocument();
@@ -205,14 +233,18 @@ describe("FavoritesList", () => {
     const refreshButton = screen.getByRole("button", { name: /refresh list/i });
     fireEvent.click(refreshButton);
 
-    expect(mockGetRecentProducts).toHaveBeenCalledTimes(2);
+    await waitFor(() => {
+      expect(mockGetRecentProducts).toHaveBeenCalledTimes(2);
+    });
   });
 
   it("formats dates correctly", async () => {
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={true} />);
 
+    const expectedDate = new Date(mockProducts[0].expiration_date).toLocaleDateString();
+
     await waitFor(() => {
-      expect(screen.getByText("Expires: 12/15/2025")).toBeInTheDocument();
+      expect(screen.getByText(`Expires: ${expectedDate}`)).toBeInTheDocument();
     });
   });
 
@@ -220,8 +252,8 @@ describe("FavoritesList", () => {
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={true} />);
 
     await waitFor(() => {
-      const activeBadge = screen.getByText("active");
-      expect(activeBadge).toHaveClass("bg-green-100", "text-green-800");
+      const activeBadges = screen.getAllByText("active");
+      expect(activeBadges[0]).toHaveClass("bg-green-100", "text-green-800");
     });
   });
 });

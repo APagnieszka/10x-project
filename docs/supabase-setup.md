@@ -7,6 +7,28 @@ This document describes how to configure and use Supabase in the 10x-project.
 1. **Docker Desktop** - installed and running
 2. **Supabase CLI** - installed via Homebrew: `brew install supabase/tap/supabase`
 
+## Connect to a hosted Supabase project (no local)
+
+If you don't want to run Supabase locally, you can point the app directly at a hosted Supabase project.
+
+1. Open Supabase Dashboard for your project.
+2. Go to **Project Settings → API**.
+3. Copy:
+	- **Project URL** (looks like `https://<ref>.supabase.co`)
+	- **anon public key**
+4. Create your local env file from the template:
+
+	```bash
+	cp .env.example .env.local
+	```
+
+5. Fill in the variables in `.env.local`:
+
+	- `PUBLIC_SUPABASE_URL` = Project URL
+	- `PUBLIC_SUPABASE_KEY` = anon public key
+
+That's it — you can run the app without `supabase start`.
+
 ## Initializing Supabase Project
 
 To initialize Supabase in the project, run:
@@ -81,16 +103,16 @@ Initial data can be added to the `supabase/seed.sql` file.
 ## Database Connection in Code
 
 In application code, use environment variables:
-- `SUPABASE_URL` - Supabase API URL
-- `SUPABASE_KEY` - anon key (public)
+- `PUBLIC_SUPABASE_URL` - Supabase API URL
+- `PUBLIC_SUPABASE_KEY` - anon public key
 
 Example in Astro:
 
 ```ts
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.SUPABASE_URL
-const supabaseKey = import.meta.env.SUPABASE_KEY
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 ```
