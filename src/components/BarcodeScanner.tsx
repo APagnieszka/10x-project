@@ -257,9 +257,7 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
       {(viewMode === "camera" || viewMode === "gallery") && (
         <div className="fixed inset-0 z-50 bg-black">
           {/* Camera viewport */}
-          {viewMode === "camera" && (
-            <div ref={scannerRef} className="absolute inset-0" style={{ width: "100%", height: "100%" }} />
-          )}
+          {viewMode === "camera" && <div ref={scannerRef} className="absolute inset-0 quagga-scanner" />}
 
           {/* Gallery image preview */}
           {viewMode === "gallery" && selectedImage && (
@@ -374,6 +372,28 @@ export function BarcodeScanner({ onBarcodeDetected, onCancel, toast }: BarcodeSc
 
           {/* Custom animation for scanning line */}
           <style>{`
+            .quagga-scanner,
+            .quagga-scanner > * {
+              width: 100% !important;
+              height: 100% !important;
+            }
+
+            /* Quagga injects video + canvases with fixed dimensions; force them to cover the viewport */
+            .quagga-scanner video {
+              position: absolute !important;
+              inset: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              object-fit: cover;
+            }
+
+            .quagga-scanner canvas {
+              position: absolute !important;
+              inset: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+
             @keyframes scan {
               0% {
                 top: 0;
