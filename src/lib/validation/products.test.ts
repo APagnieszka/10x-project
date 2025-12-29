@@ -313,6 +313,22 @@ describe("createProductSchema", () => {
         expect(urlError?.message).toContain("valid URL");
       }
     });
+
+    it("should allow empty main_image_url", () => {
+      const product = {
+        name: "Test Product",
+        quantity: 1,
+        unit: "pcs",
+        expiration_date: "2025-12-31",
+        main_image_url: "",
+      };
+
+      const result = createProductSchema.safeParse(product);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.main_image_url).toBeUndefined();
+      }
+    });
   });
 
   describe("edge cases", () => {

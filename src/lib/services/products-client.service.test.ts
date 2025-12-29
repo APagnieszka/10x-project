@@ -96,7 +96,7 @@ describe("products-client.service", () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
       fetchMock.mockResolvedValue({
         ok: true,
-        json: async () => ({ data: mockProductResponse }),
+        json: async () => mockProductResponse,
       } as unknown as Response);
 
       const result = await createProduct(mockProductData);
@@ -110,6 +110,17 @@ describe("products-client.service", () => {
         },
         body: JSON.stringify(mockProductData),
       });
+      expect(result).toEqual(mockProductResponse);
+    });
+
+    it("supports legacy wrapped response shape", async () => {
+      mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
+      fetchMock.mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: mockProductResponse }),
+      } as unknown as Response);
+
+      const result = await createProduct(mockProductData);
       expect(result).toEqual(mockProductResponse);
     });
 

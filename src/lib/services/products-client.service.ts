@@ -33,8 +33,19 @@ export async function createProduct(productData: CreateProductCommand): Promise<
     throw new Error(errorData.error?.message || "Failed to add product");
   }
 
-  const result = await response.json();
-  return result.data;
+  const result: unknown = await response.json();
+
+  // POST /api/products currently returns the product directly (not wrapped in { data: ... }).
+  // Keep compatibility with both shapes.
+  const maybeWrapped = result as { data?: unknown } | null;
+  const product =
+    maybeWrapped && typeof maybeWrapped === "object" && "data" in maybeWrapped ? maybeWrapped.data : result;
+
+  if (!product || typeof product !== "object") {
+    throw new Error("Failed to add product");
+  }
+
+  return product as ProductDto;
 }
 
 /**
