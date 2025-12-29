@@ -22,6 +22,10 @@ pnpm-debug.log*
 # local-only e2e credentials (never commit)
 .env.e2e.local
 
+# playwright artifacts
+playwright-report/
+test-results/
+
 # macOS-specific files
 .DS_Store
 

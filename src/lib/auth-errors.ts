@@ -11,6 +11,18 @@ export const authErrorMessages: Record<string, { pl: string; en: string }> = {
     pl: "Rejestracja jest wyłączona",
     en: "Signup is disabled",
   },
+  user_already_exists: {
+    pl: "Konto z tym adresem e-mail już istnieje",
+    en: "A user with this email already exists",
+  },
+  email_exists: {
+    pl: "Konto z tym adresem e-mail już istnieje",
+    en: "Email already exists",
+  },
+  email_taken: {
+    pl: "Konto z tym adresem e-mail już istnieje",
+    en: "Email already taken",
+  },
   user_not_found: {
     pl: "Użytkownik nie znaleziony",
     en: "User not found",

@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { AddProductPage } from "@/components/AddProductPage";
+import { AddProductPageIsland } from "@/components/AddProductPageIsland";
 
 // Check authentication
 const supabase = Astro.locals.supabase;
@@ -30,7 +30,7 @@ const pageDescription =
         </p>
       </header>
 
-      <AddProductPage client:load />
+      <AddProductPageIsland client:load />
     </div>
   </main>
 </Layout>
