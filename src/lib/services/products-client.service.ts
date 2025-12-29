@@ -1,4 +1,3 @@
-import { supabaseClient } from "@/db/supabase.client";
 import type { CreateProductCommand, ProductDto } from "@/types";
 
 /**
@@ -8,25 +7,19 @@ import type { CreateProductCommand, ProductDto } from "@/types";
  * @throws Error if creation fails
  */
 export async function createProduct(productData: CreateProductCommand): Promise<ProductDto> {
-  // Get the current session
-  const { data, error: sessionError } = await supabaseClient.auth.getSession();
-  const session = data?.session;
-
-  if (sessionError || !session) {
-    throw new Error("You must be logged in to add a product");
-  }
-
-  const token = session.access_token;
-
   // Submit the product data
   const response = await fetch("/api/products", {
     method: "POST",
+    credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(productData),
   });
+
+  if (response.status === 401) {
+    throw new Error("You must be logged in to add a product");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: { message: "Failed to add product" } }));
@@ -55,16 +48,6 @@ export async function createProduct(productData: CreateProductCommand): Promise<
  * @throws Error if fetch fails
  */
 export async function getRecentProducts(limit = 10, status?: ProductDto["status"]): Promise<ProductDto[]> {
-  // Get the current session
-  const { data, error: sessionError } = await supabaseClient.auth.getSession();
-  const session = data?.session;
-
-  if (sessionError || !session) {
-    throw new Error("You must be logged in to fetch products");
-  }
-
-  const token = session.access_token;
-
   // Fetch recent products
   const url = new URL("/api/products", window.location.origin);
   url.searchParams.set("limit", String(limit));
@@ -74,10 +57,12 @@ export async function getRecentProducts(limit = 10, status?: ProductDto["status"
 
   const response = await fetch(url.toString(), {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "same-origin",
   });
+
+  if (response.status === 401) {
+    throw new Error("You must be logged in to fetch products");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: { message: "Failed to fetch recent products" } }));
@@ -98,15 +83,6 @@ export async function getRecentProductsFiltered(
 ): Promise<ProductDto[]> {
   const { status, to_buy } = options ?? {};
 
-  const { data, error: sessionError } = await supabaseClient.auth.getSession();
-  const session = data?.session;
-
-  if (sessionError || !session) {
-    throw new Error("You must be logged in to fetch products");
-  }
-
-  const token = session.access_token;
-
   const url = new URL("/api/products", window.location.origin);
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("sort", "created_at");
@@ -116,10 +92,12 @@ export async function getRecentProductsFiltered(
 
   const response = await fetch(url.toString(), {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "same-origin",
   });
+
+  if (response.status === 401) {
+    throw new Error("You must be logged in to fetch products");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: { message: "Failed to fetch recent products" } }));
@@ -131,23 +109,18 @@ export async function getRecentProductsFiltered(
 }
 
 export async function markProductSpoiled(productId: number): Promise<ProductDto> {
-  const { data, error: sessionError } = await supabaseClient.auth.getSession();
-  const session = data?.session;
-
-  if (sessionError || !session) {
-    throw new Error("You must be logged in to update a product");
-  }
-
-  const token = session.access_token;
-
   const response = await fetch(`/api/products/${productId}`, {
     method: "PATCH",
+    credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ action: "spoiled" }),
   });
+
+  if (response.status === 401) {
+    throw new Error("You must be logged in to update a product");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: { message: "Failed to update product" } }));
@@ -166,23 +139,18 @@ export async function markProductSpoiled(productId: number): Promise<ProductDto>
 }
 
 export async function markProductOpened(productId: number): Promise<ProductDto> {
-  const { data, error: sessionError } = await supabaseClient.auth.getSession();
-  const session = data?.session;
-
-  if (sessionError || !session) {
-    throw new Error("You must be logged in to update a product");
-  }
-
-  const token = session.access_token;
-
   const response = await fetch(`/api/products/${productId}`, {
     method: "PATCH",
+    credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ action: "opened", opened_date: new Date().toISOString() }),
   });
+
+  if (response.status === 401) {
+    throw new Error("You must be logged in to update a product");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: { message: "Failed to update product" } }));
@@ -201,21 +169,14 @@ export async function markProductOpened(productId: number): Promise<ProductDto> 
 }
 
 export async function deleteProduct(productId: number): Promise<void> {
-  const { data, error: sessionError } = await supabaseClient.auth.getSession();
-  const session = data?.session;
-
-  if (sessionError || !session) {
-    throw new Error("You must be logged in to delete a product");
-  }
-
-  const token = session.access_token;
-
   const response = await fetch(`/api/products/${productId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "same-origin",
   });
+
+  if (response.status === 401) {
+    throw new Error("You must be logged in to delete a product");
+  }
 
   if (response.status === 204) return;
 

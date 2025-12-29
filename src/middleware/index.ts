@@ -50,10 +50,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userError || !user) {
       // Dla stron - przekieruj do logowania
       if (context.url.pathname.startsWith("/products")) {
         const redirectUrl = `/login?redirect=${encodeURIComponent(context.url.pathname)}`;
@@ -70,7 +71,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     // Dodatkowa walidacja dla API
-    if (context.url.pathname.startsWith("/api/") && !userSchema.safeParse(session?.user).success) {
+    if (context.url.pathname.startsWith("/api/") && !userSchema.safeParse(user).success) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },

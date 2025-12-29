@@ -4,11 +4,11 @@ import { ProductsListPageIsland } from "@/components/ProductsListPageIsland";
 
 const supabase = Astro.locals.supabase;
 const {
-  data: { session },
+  data: { user },
   error: authError,
-} = await supabase.auth.getSession();
+} = await supabase.auth.getUser();
 
-if (authError || !session) {
+if (authError || !user) {
   return Astro.redirect("/login");
 }
 
