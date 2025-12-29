@@ -23,7 +23,11 @@ export const createProductSchema = z
     opened: z.boolean().optional().default(false),
     to_buy: z.boolean().optional().default(false),
     opened_date: z.string().optional(),
-    main_image_url: z.string().url("Main image URL must be a valid URL").optional(),
+    main_image_url: z.preprocess((value) => {
+      if (typeof value !== "string") return value;
+      const trimmed = value.trim();
+      return trimmed.length === 0 ? undefined : trimmed;
+    }, z.string().url("Main image URL must be a valid URL").optional()),
   })
   .refine(
     (data) => {

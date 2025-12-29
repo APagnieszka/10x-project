@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-labelledby="title desc">
+  <title id="title">Default product image</title>
+  <desc id="desc">A simple placeholder illustration used when a product image URL is not provided.</desc>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="800" height="800" fill="#f3f4f6"/>
+
+  <!-- Card -->
+  <rect x="140" y="120" width="520" height="560" rx="36" fill="#ffffff" stroke="#e5e7eb" stroke-width="6"/>
+
+  <!-- Bottle silhouette -->
+  <path d="M380 220h40c12 0 22 10 22 22v40c0 10 6 19 15 23 38 18 63 56 63 100v198c0 40-33 73-73 73H350c-40 0-73-33-73-73V405c0-44 25-82 63-100 9-4 15-13 15-23v-40c0-12 10-22 22-22z" fill="#111827" opacity="0.10"/>
+
+  <!-- Label band -->
+  <rect x="290" y="430" width="220" height="86" rx="18" fill="#111827" opacity="0.10"/>
+
+  <!-- Text lines -->
+  <rect x="230" y="560" width="340" height="18" rx="9" fill="#111827" opacity="0.10"/>
+  <rect x="260" y="600" width="280" height="18" rx="9" fill="#111827" opacity="0.10"/>
+
+  <!-- Small badge -->
+  <circle cx="590" cy="200" r="28" fill="#111827" opacity="0.10"/>
+</svg>
