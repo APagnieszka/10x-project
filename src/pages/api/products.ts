@@ -402,6 +402,26 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
     const sort = url.searchParams.get("sort") || "created_at";
     const order = url.searchParams.get("order") === "asc" ? "asc" : "desc";
     const statusFilter = url.searchParams.get("status");
+    const toBuyParam = url.searchParams.get("to_buy");
+    const toBuyFilter =
+      toBuyParam === null ? null : toBuyParam === "true" ? true : toBuyParam === "false" ? false : "invalid";
+
+    if (toBuyFilter === "invalid") {
+      logger.warn("Invalid to_buy filter", { to_buy: toBuyParam });
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "BAD_REQUEST",
+            message: "Invalid to_buy filter",
+            timestamp: new Date().toISOString(),
+          },
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
     // Validate sort field for security
     const allowedSortFields = ["created_at", "name", "expiration_date"];
@@ -475,6 +495,10 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
 
     if (statusFilter) {
       query = query.eq("status", statusFilter);
+    }
+
+    if (toBuyFilter !== null) {
+      query = query.eq("to_buy", toBuyFilter);
     }
 
     const { data, error } = await query;
