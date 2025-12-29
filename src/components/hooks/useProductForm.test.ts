@@ -50,7 +50,7 @@ describe("useProductForm", () => {
 
     const { result } = renderHook(() => useProductForm());
 
-    let submitResult: any = null;
+    let submitResult: typeof mockProductResponse | null = null;
 
     await act(async () => {
       submitResult = await result.current.submitProduct(mockProductData);
@@ -69,7 +69,7 @@ describe("useProductForm", () => {
 
     const { result } = renderHook(() => useProductForm());
 
-    let submitResult: any = null;
+    let submitResult: typeof mockProductResponse | null = null;
 
     await act(async () => {
       submitResult = await result.current.submitProduct(mockProductData);
@@ -84,7 +84,7 @@ describe("useProductForm", () => {
 
   it("sets submitting state during submission", async () => {
     mockCreateProduct.mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve(mockProductResponse), 100))
+      () => new Promise<typeof mockProductResponse>((resolve) => setTimeout(() => resolve(mockProductResponse), 100))
     );
 
     const { result } = renderHook(() => useProductForm());

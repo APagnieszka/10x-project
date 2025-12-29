@@ -15,6 +15,8 @@ import { supabaseClient } from "@/db/supabase.client";
 const mockSupabaseClient = vi.mocked(supabaseClient);
 
 describe("products-client.service", () => {
+  let fetchMock: ReturnType<typeof vi.fn<Parameters<typeof fetch>, Promise<Response>>>;
+
   const mockSession = {
     data: {
       session: {
@@ -81,7 +83,8 @@ describe("products-client.service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock fetch globally
-    global.fetch = vi.fn();
+    fetchMock = vi.fn<Parameters<typeof fetch>, Promise<Response>>();
+    global.fetch = fetchMock as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -91,10 +94,10 @@ describe("products-client.service", () => {
   describe("createProduct", () => {
     it("creates product successfully", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ data: mockProductResponse }),
-      });
+        json: async () => ({ data: mockProductResponse }),
+      } as unknown as Response);
 
       const result = await createProduct(mockProductData);
 
@@ -118,27 +121,29 @@ describe("products-client.service", () => {
 
     it("throws error on API failure", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: false,
-        json: () => Promise.resolve({ error: { message: "API Error" } }),
-      });
+        json: async () => ({ error: { message: "API Error" } }),
+      } as unknown as Response);
 
       await expect(createProduct(mockProductData)).rejects.toThrow("API Error");
     });
 
     it("throws error on network failure", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockRejectedValue(new Error("Network error"));
+      fetchMock.mockRejectedValue(new Error("Network error"));
 
       await expect(createProduct(mockProductData)).rejects.toThrow("Network error");
     });
 
     it("handles malformed API response", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: false,
-        json: () => Promise.reject(new Error("Invalid JSON")),
-      });
+        json: async () => {
+          throw new Error("Invalid JSON");
+        },
+      } as unknown as Response);
 
       await expect(createProduct(mockProductData)).rejects.toThrow("Failed to add product");
     });
@@ -147,10 +152,10 @@ describe("products-client.service", () => {
   describe("getRecentProducts", () => {
     it("fetches recent products successfully", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ data: mockProductsList }),
-      });
+        json: async () => ({ data: mockProductsList }),
+      } as unknown as Response);
 
       const result = await getRecentProducts(5);
 
@@ -166,10 +171,10 @@ describe("products-client.service", () => {
 
     it("uses default limit of 10 when not specified", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ data: mockProductsList }),
-      });
+        json: async () => ({ data: mockProductsList }),
+      } as unknown as Response);
 
       await getRecentProducts();
 
@@ -187,20 +192,20 @@ describe("products-client.service", () => {
 
     it("throws error on API failure", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: false,
-        json: () => Promise.resolve({ error: { message: "Fetch Error" } }),
-      });
+        json: async () => ({ error: { message: "Fetch Error" } }),
+      } as unknown as Response);
 
       await expect(getRecentProducts()).rejects.toThrow("Fetch Error");
     });
 
     it("returns empty array when API returns no data", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockResolvedValue({
+      fetchMock.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ data: null }),
-      });
+        json: async () => ({ data: null }),
+      } as unknown as Response);
 
       const result = await getRecentProducts();
 
@@ -209,7 +214,7 @@ describe("products-client.service", () => {
 
     it("handles network errors", async () => {
       mockSupabaseClient.auth.getSession.mockResolvedValue(mockSession);
-      (global.fetch as any).mockRejectedValue(new Error("Network failure"));
+      fetchMock.mockRejectedValue(new Error("Network failure"));
 
       await expect(getRecentProducts()).rejects.toThrow("Network failure");
     });
