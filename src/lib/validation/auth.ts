@@ -1,14 +1,16 @@
 import { z } from "zod";
 
+const emailSchema = z.string().trim().toLowerCase().email("Invalid email address");
+
 // Auth validation schemas
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: emailSchema,
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const registerSchema = z
   .object({
-    email: z.string().email("Invalid email address"),
+    email: emailSchema,
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Password confirmation must be at least 8 characters"),
   })
@@ -18,22 +20,27 @@ export const registerSchema = z
   });
 
 export const resetPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: emailSchema,
 });
 
 export const registerWithHouseholdSchema = z
   .object({
-    email: z.string().email("Invalid email address"),
+    email: emailSchema,
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Password confirmation must be at least 8 characters"),
     householdName: z
       .string()
-      .min(2, "Nazwa gospodarstwa musi mieć minimum 2 znaki")
-      .max(100, "Nazwa gospodarstwa może mieć maksymalnie 100 znaków")
-      .regex(
-        /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9\s\-_]+$/,
-        "Nazwa może zawierać tylko litery, cyfry, spacje i podstawowe znaki"
-      ),
+      .optional()
+      .transform((value) => (value ?? "").trim())
+      .refine((value) => value.length === 0 || value.length >= 2, {
+        message: "Nazwa gospodarstwa musi mieć minimum 2 znaki",
+      })
+      .refine((value) => value.length === 0 || value.length <= 100, {
+        message: "Nazwa gospodarstwa może mieć maksymalnie 100 znaków",
+      })
+      .refine((value) => value.length === 0 || /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9\s\-_]+$/.test(value), {
+        message: "Nazwa może zawierać tylko litery, cyfry, spacje i podstawowe znaki",
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
