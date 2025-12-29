@@ -88,6 +88,48 @@ export async function getRecentProducts(limit = 10, status?: ProductDto["status"
   return result.data || [];
 }
 
+/**
+ * Get recent products with optional status and to_buy filtering.
+ * This is a thin wrapper over GET /api/products.
+ */
+export async function getRecentProductsFiltered(
+  limit = 10,
+  options?: { status?: ProductDto["status"]; to_buy?: boolean }
+): Promise<ProductDto[]> {
+  const { status, to_buy } = options ?? {};
+
+  const { data, error: sessionError } = await supabaseClient.auth.getSession();
+  const session = data?.session;
+
+  if (sessionError || !session) {
+    throw new Error("You must be logged in to fetch products");
+  }
+
+  const token = session.access_token;
+
+  const url = new URL("/api/products", window.location.origin);
+  url.searchParams.set("limit", String(limit));
+  url.searchParams.set("sort", "created_at");
+  url.searchParams.set("order", "desc");
+  if (status) url.searchParams.set("status", status);
+  if (typeof to_buy === "boolean") url.searchParams.set("to_buy", String(to_buy));
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: { message: "Failed to fetch recent products" } }));
+    throw new Error(errorData.error?.message || "Failed to fetch recent products");
+  }
+
+  const result = await response.json();
+  return result.data || [];
+}
+
 export async function markProductSpoiled(productId: number): Promise<ProductDto> {
   const { data, error: sessionError } = await supabaseClient.auth.getSession();
   const session = data?.session;
