@@ -57,14 +57,14 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
         // Check network connectivity first
         const isOnline = await checkNetworkConnectivity();
         if (!isOnline) {
-          throw new Error("No internet connection. Please check your network and try again.");
+          throw new Error("Brak połączenia z internetem. Sprawdź sieć i spróbuj ponownie.");
         }
 
         const recentProducts = await getRecentProducts(10);
         setProducts(recentProducts);
         setRetryCount(0); // Reset on success
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Failed to load recent products";
+        const errorMessage = err instanceof Error ? err.message : "Nie udało się wczytać ostatnich produktów";
         setError(errorMessage);
       } finally {
         setIsLoading(false);
@@ -80,7 +80,7 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
     setRetryCount(newRetryCount);
 
     if (newRetryCount > 3) {
-      setError("Maximum retry attempts reached. Please try again later.");
+      setError("Osiągnięto maksymalną liczbę prób. Spróbuj ponownie później.");
       return;
     }
 
@@ -114,18 +114,25 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
     }
   };
 
+  const statusLabel = (status: string) => {
+    if (status === "active") return "W lodówce";
+    if (status === "draft") return "Szkic";
+    if (status === "spoiled") return "Zepsute";
+    return status;
+  };
+
   if (!isVisible) return null;
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-lg">Quick Select from Recent Products</CardTitle>
-        <CardDescription>Choose from your recently added products to quickly fill the form</CardDescription>
+        <CardTitle className="text-lg">Szybki wybór z ostatnich produktów</CardTitle>
+        <CardDescription>Wybierz ostatnio dodane produkty, aby szybko uzupełnić formularz</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading && (
           <div className="text-center py-4">
-            <p className="text-sm text-gray-600">Loading recent products...</p>
+            <p className="text-sm text-gray-600">Ładowanie ostatnich produktów...</p>
           </div>
         )}
 
@@ -135,16 +142,16 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
             <div className="flex gap-2 justify-center">
               {retryCount < 3 && (
                 <Button variant="outline" size="sm" onClick={retryWithBackoff} disabled={isRetrying}>
-                  {isRetrying ? "Retrying..." : `Try Again (${retryCount + 1}/3)`}
+                  {isRetrying ? "Ponawiam..." : `Spróbuj ponownie (${retryCount + 1}/3)`}
                 </Button>
               )}
               <Button variant="ghost" size="sm" onClick={() => setError(null)}>
-                Dismiss
+                Zamknij
               </Button>
             </div>
             {retryCount > 0 && retryCount < 3 && (
               <p className="text-xs text-gray-500 mt-2">
-                Retrying in {Math.ceil(getRetryDelay(retryCount) / 1000)} seconds...
+                Ponawiam za {Math.ceil(getRetryDelay(retryCount) / 1000)} s...
               </p>
             )}
           </div>
@@ -152,8 +159,8 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
 
         {!isLoading && !error && products.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-sm text-gray-600">No recent products found</p>
-            <p className="text-xs text-gray-500 mt-1">Add some products first to see them here</p>
+            <p className="text-sm text-gray-600">Brak ostatnich produktów</p>
+            <p className="text-xs text-gray-500 mt-1">Najpierw dodaj produkty, aby pojawiły się tutaj</p>
           </div>
         )}
 
@@ -174,9 +181,11 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
                         <Badge variant="outline" className="text-xs">
                           {product.quantity} {product.unit}
                         </Badge>
-                        <Badge className={`text-xs ${getStatusColor(product.status)}`}>{product.status}</Badge>
+                        <Badge className={`text-xs ${getStatusColor(product.status)}`}>
+                          {statusLabel(product.status)}
+                        </Badge>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Expires: {formatDate(product.expiration_date)}</p>
+                      <p className="text-xs text-gray-500 mt-1">Ważne do: {formatDate(product.expiration_date)}</p>
                     </div>
                     {product.main_image_url && (
                       <div className="ml-3">
@@ -197,7 +206,7 @@ export function FavoritesList({ onSelectProduct, isVisible }: FavoritesListProps
         {!isLoading && !error && products.length > 0 && (
           <div className="mt-4 text-center">
             <Button variant="outline" size="sm" onClick={() => loadRecentProducts()}>
-              Refresh List
+              Odśwież listę
             </Button>
           </div>
         )}

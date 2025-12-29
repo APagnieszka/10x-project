@@ -401,6 +401,7 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
     const limit = Math.min(parseInt(url.searchParams.get("limit") || "10"), 50); // Max 50
     const sort = url.searchParams.get("sort") || "created_at";
     const order = url.searchParams.get("order") === "asc" ? "asc" : "desc";
+    const statusFilter = url.searchParams.get("status");
 
     // Validate sort field for security
     const allowedSortFields = ["created_at", "name", "expiration_date"];
@@ -411,6 +412,25 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
           error: {
             code: "BAD_REQUEST",
             message: "Invalid sort field",
+            timestamp: new Date().toISOString(),
+          },
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Validate optional status filter
+    const allowedStatuses = ["draft", "active", "spoiled"] as const;
+    if (statusFilter && !allowedStatuses.includes(statusFilter as (typeof allowedStatuses)[number])) {
+      logger.warn("Invalid status filter", { status: statusFilter });
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "BAD_REQUEST",
+            message: "Invalid status filter",
             timestamp: new Date().toISOString(),
           },
         }),
@@ -446,12 +466,18 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
     }
 
     // Fetch products
-    const { data, error } = await userSupabase
+    let query = userSupabase
       .from("products")
       .select("*")
       .eq("household_id", householdId)
       .order(sort, { ascending: order === "asc" })
       .limit(limit);
+
+    if (statusFilter) {
+      query = query.eq("status", statusFilter);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       logger.error("Failed to fetch products", error);
