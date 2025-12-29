@@ -74,13 +74,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Create a Supabase client with the user's JWT token
     // This ensures RLS policies work correctly with auth.uid()
-    const userSupabase = createClient<Database>(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_KEY, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    const userSupabase = createClient<Database>(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    });
+      }
+    );
 
     // Get household ID for rate limiting
     // We need the household ID early to enforce per-household rate limits
@@ -381,13 +385,17 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
     logger.info("User authenticated successfully");
 
     // Create a Supabase client with the user's JWT token
-    const userSupabase = createClient<Database>(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_KEY, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    const userSupabase = createClient<Database>(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    });
+      }
+    );
 
     // Parse query parameters
     const limit = Math.min(parseInt(url.searchParams.get("limit") || "10"), 50); // Max 50

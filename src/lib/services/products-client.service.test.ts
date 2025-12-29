@@ -16,9 +16,12 @@ const mockSupabaseClient = vi.mocked(supabaseClient);
 
 describe("products-client.service", () => {
   const mockSession = {
-    session: {
-      access_token: "mock-token",
+    data: {
+      session: {
+        access_token: "mock-token",
+      },
     },
+    error: null,
   };
 
   const mockProductData = {
@@ -100,7 +103,7 @@ describe("products-client.service", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${mockSession.session.access_token}`,
+          Authorization: `Bearer ${mockSession.data.session.access_token}`,
         },
         body: JSON.stringify(mockProductData),
       });
@@ -108,7 +111,7 @@ describe("products-client.service", () => {
     });
 
     it("throws error when not logged in", async () => {
-      mockSupabaseClient.auth.getSession.mockResolvedValue({ session: null });
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
 
       await expect(createProduct(mockProductData)).rejects.toThrow("You must be logged in to add a product");
     });
@@ -155,7 +158,7 @@ describe("products-client.service", () => {
       expect(global.fetch).toHaveBeenCalledWith("/api/products?limit=5&sort=created_at&order=desc", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${mockSession.session.access_token}`,
+          Authorization: `Bearer ${mockSession.data.session.access_token}`,
         },
       });
       expect(result).toEqual(mockProductsList);
@@ -177,7 +180,7 @@ describe("products-client.service", () => {
     });
 
     it("throws error when not logged in", async () => {
-      mockSupabaseClient.auth.getSession.mockResolvedValue({ session: null });
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
 
       await expect(getRecentProducts()).rejects.toThrow("You must be logged in to fetch products");
     });

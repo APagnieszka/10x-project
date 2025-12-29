@@ -9,13 +9,14 @@ import type { CreateProductCommand, ProductDto } from "@/types";
  */
 export async function createProduct(productData: CreateProductCommand): Promise<ProductDto> {
   // Get the current session
-  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+  const { data, error: sessionError } = await supabaseClient.auth.getSession();
+  const session = data?.session;
 
-  if (sessionError || !sessionData.session) {
+  if (sessionError || !session) {
     throw new Error("You must be logged in to add a product");
   }
 
-  const token = sessionData.session.access_token;
+  const token = session.access_token;
 
   // Submit the product data
   const response = await fetch("/api/products", {
@@ -44,13 +45,14 @@ export async function createProduct(productData: CreateProductCommand): Promise<
  */
 export async function getRecentProducts(limit = 10): Promise<ProductDto[]> {
   // Get the current session
-  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+  const { data, error: sessionError } = await supabaseClient.auth.getSession();
+  const session = data?.session;
 
-  if (sessionError || !sessionData.session) {
+  if (sessionError || !session) {
     throw new Error("You must be logged in to fetch products");
   }
 
-  const token = sessionData.session.access_token;
+  const token = session.access_token;
 
   // Fetch recent products
   const response = await fetch(`/api/products?limit=${limit}&sort=created_at&order=desc`, {

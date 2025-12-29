@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import type { APIContext } from "astro";
 
 // Mock environment variables
-vi.stubEnv("SUPABASE_URL", "http://localhost:54321");
-vi.stubEnv("SUPABASE_KEY", "test-anon-key");
+vi.stubEnv("PUBLIC_SUPABASE_URL", "http://localhost:54321");
+vi.stubEnv("PUBLIC_SUPABASE_KEY", "test-anon-key");
 
 // Mock the Supabase client
 const mockSupabaseClient = {

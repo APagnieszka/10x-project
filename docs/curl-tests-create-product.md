@@ -2,12 +2,22 @@
 
 ## Setup
 
-First, get your JWT token:
-```bash
-TOKEN=$(bash scripts/get-anon-key.sh)
-```
+First, get your JWT token (recommended: run the helper script that logs in and executes requests):
 
-Or set it manually:
+1. Create `.env.e2e.local` (never commit secrets):
+
+  ```bash
+  cp .env.e2e.example .env.e2e.local
+  ```
+
+2. Fill `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_KEY`, `TEST_USER_EMAIL`, `TEST_USER_PASSWORD`.
+3. Run:
+
+  ```bash
+  bash test-create-product.sh
+  ```
+
+Or set `TOKEN` manually (if you already have it):
 ```bash
 TOKEN="your_jwt_token_here"
 ```
