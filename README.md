@@ -6,6 +6,7 @@ A Progressive Web App (PWA) designed to help households reduce food waste by ena
 
 - [Tech Stack](#tech-stack)
 - [Getting Started Locally](#getting-started-locally)
+- [E2E Tests](#e2e-tests)
 - [Available Scripts](#available-scripts)
 - [Project Scope](#project-scope)
 - [Project Status](#project-status)
@@ -97,17 +98,20 @@ If your terminal shows an incorrect Node.js or npm version:
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/APagnieszka/10x-project.git
    cd 10x-project
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -118,18 +122,36 @@ If your terminal shows an incorrect Node.js or npm version:
 
 For local development with Supabase backend services, see the [Supabase Setup Guide](docs/supabase-setup.md).
 
+## E2E Tests
+
+Playwright loads E2E environment variables from `.env.e2e.local` first, then falls back to `.env`.
+
+Required:
+
+- `PUBLIC_SUPABASE_URL` - Supabase project URL
+- `PUBLIC_SUPABASE_KEY` - Supabase anon key (public)
+
+Optional (recommended for local/CI):
+
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key used only by E2E cleanup (deletes the user created in the signup test via Admin API). Keep it secret and never commit it.
+
+How to get the key:
+
+- Local Supabase (CLI): `npx supabase status` prints both anon and service role keys.
+- Hosted Supabase: Supabase Dashboard → Project Settings → API → service_role key.
+
 ## Available Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start the development server |
-| `npm run build` | Build the project for production |
-| `npm run preview` | Preview the production build locally |
-| `npm run astro` | Run Astro CLI commands |
-| `npm run lint` | Run ESLint to check code quality |
+| Script             | Description                             |
+| ------------------ | --------------------------------------- |
+| `npm run dev`      | Start the development server            |
+| `npm run build`    | Build the project for production        |
+| `npm run preview`  | Preview the production build locally    |
+| `npm run astro`    | Run Astro CLI commands                  |
+| `npm run lint`     | Run ESLint to check code quality        |
 | `npm run lint:fix` | Run ESLint and automatically fix issues |
-| `npm run format` | Format code with Prettier |
-| `npm run test` | Run tests with Vitest |
+| `npm run format`   | Format code with Prettier               |
+| `npm run test`     | Run tests with Vitest                   |
 
 ## Project Scope
 

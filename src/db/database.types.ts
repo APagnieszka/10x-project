@@ -386,7 +386,14 @@ export interface Database {
       };
     };
     Views: Record<never, never>;
-    Functions: Record<never, never>;
+    Functions: {
+      create_household_and_link_user: {
+        Args: {
+          household_name: string;
+        };
+        Returns: number;
+      };
+    };
     Enums: Record<never, never>;
     CompositeTypes: Record<never, never>;
   };

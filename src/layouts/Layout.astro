@@ -1,6 +1,5 @@
 ---
 import "../styles/global.css";
-import { ToastWrapper } from "../components/ToastWrapper";
 import Header from "../components/Header.astro";
 
 interface Props {
@@ -43,9 +42,7 @@ if (session?.user) {
   </head>
   <body>
     {userEmail && <Header userEmail={userEmail} householdName={householdName} />}
-    <ToastWrapper client:load>
-      <slot />
-    </ToastWrapper>
+    <slot />
   </body>
 </html>
 

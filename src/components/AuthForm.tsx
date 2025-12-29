@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/components/hooks/useAuth";
 import { useToast } from "@/components/Toast";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 type AuthMode = "login" | "register" | "reset";
 
@@ -25,8 +27,14 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   const { login, register: authRegister, resetPassword } = useAuth();
-  const { authError, success } = useToast();
+  const { authError, success, error: showErrorToast } = useToast();
   const isLogin = mode === "login";
   const isRegister = mode === "register";
   const isReset = mode === "reset";
@@ -58,7 +66,13 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
     }
 
     if (error) {
-      authError(error.message);
+      const errorCode = (error as { code?: unknown } | null)?.code;
+      if (typeof errorCode === "string" && errorCode.length > 0) {
+        authError(getAuthErrorMessage(errorCode, "pl"));
+        return;
+      }
+
+      showErrorToast("Błąd", error.message);
     } else {
       success(isLogin ? "Zalogowano pomyślnie" : isRegister ? "Konto utworzone" : "E-mail wysłany");
       // Przekierowanie po sukcesie - odczekaj chwilę na aktualizację stanu
@@ -84,7 +98,7 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6" data-hydrated={isHydrated ? "true" : "false"}>
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">Email *</Label>
@@ -120,13 +134,10 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
           {/* Household Name - only for register */}
           {isRegister && (
             <div className="space-y-2">
-              <Label htmlFor="householdName">Nazwa gospodarstwa *</Label>
+              <Label htmlFor="householdName">Nazwa gospodarstwa (opcjonalnie)</Label>
               <Input id="householdName" {...register("householdName")} placeholder="np. Rodzina Kowalskich" />
               {formErrors.householdName && <p className="text-sm text-red-600">{formErrors.householdName.message}</p>}
-              <p className="text-xs text-muted-foreground">
-                Na razie każdy użytkownik tworzy własne gospodarstwo. Możliwość zapraszania znajomych będzie dostępna
-                wkrótce.
-              </p>
+              <p className="text-xs text-muted-foreground">Jeśli zostawisz puste, domyślnie użyjemy Twojego e-maila.</p>
             </div>
           )}
 
