@@ -12,6 +12,7 @@
     "hooks:install": "bash ./scripts/setup-git-hooks.sh",
     "format": "prettier --write .",
     "test": "vitest",
+    "test:e2e": "playwright test",
     "check:mvp": "npx @modelcontextprotocol/inspector --cli --config .vscode/mcp.json --method tools/call --tool-name check-mvp --tool-arg projectPath=$PWD"
   },
   "dependencies": {
@@ -46,6 +47,8 @@
   "devDependencies": {
     "@eslint/compat": "1.2.7",
     "@eslint/js": "9.23.0",
+    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.56.1",
     "@przeprogramowani/10x-mvp-tracker": "^1.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
