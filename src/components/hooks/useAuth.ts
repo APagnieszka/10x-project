@@ -81,8 +81,7 @@ export function useAuth() {
     logger.info("User created successfully, creating household");
 
     try {
-      const { data: sessionData } = await supabaseClient.auth.getSession();
-      const session = signUpData.session ?? sessionData.session;
+      const session = signUpData.session;
 
       // If email confirmation is enabled, signUp returns a user but no session.
       // In that case we can't create a household yet (RLS requires an authenticated user).

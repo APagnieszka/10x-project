@@ -24,33 +24,43 @@ function jsonError(status: number, code: string, message: string) {
 
 async function getUserSupabaseOrError(request: Request, locals: App.Locals, logger: ReturnType<typeof createLogger>) {
   const authHeader = request.headers.get("Authorization");
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    logger.warn("Unauthorized request: Missing or invalid authorization header");
-    return jsonError(401, "UNAUTHORIZED", "Missing or invalid authorization header");
-  }
 
-  const token = authHeader.substring(7);
+  let userId: string;
+  let userSupabase: SupabaseClient<Database> = locals.supabase as unknown as SupabaseClient<Database>;
 
-  const { data: userData, error: authError } = await locals.supabase.auth.getUser(token);
-  if (authError || !userData.user) {
-    logger.warn("Authentication failed: Invalid or expired token", { authError: authError?.message });
-    return jsonError(401, "UNAUTHORIZED", "Invalid or expired token");
-  }
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.substring(7);
 
-  const userId = userData.user.id;
-  logger.addContext({ userId });
+    const { data: userData, error: authError } = await locals.supabase.auth.getUser(token);
+    if (authError || !userData.user) {
+      logger.warn("Authentication failed: Invalid or expired token", { authError: authError?.message });
+      return jsonError(401, "UNAUTHORIZED", "Invalid or expired token");
+    }
 
-  const userSupabase: SupabaseClient<Database> = createClient<Database>(
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_KEY,
-    {
+    userId = userData.user.id;
+    logger.addContext({ userId });
+
+    userSupabase = createClient<Database>(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_KEY, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       },
-    }
-  );
+    });
+
+    return { userId, userSupabase };
+  }
+
+  const { data: userData, error: authError } = await locals.supabase.auth.getUser();
+  if (authError || !userData.user) {
+    logger.warn("Unauthorized request: missing credentials (no Bearer token and no cookie session)", {
+      authError: authError?.message,
+    });
+    return jsonError(401, "UNAUTHORIZED", "Missing credentials");
+  }
+
+  userId = userData.user.id;
+  logger.addContext({ userId });
 
   return { userId, userSupabase };
 }

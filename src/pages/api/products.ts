@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/db/database.types";
 import { ProductsService } from "@/lib/services/products.service";
@@ -25,66 +25,68 @@ export const POST: APIRoute = async ({ request, locals }) => {
   logger.info("Product creation request received");
 
   try {
-    // Get the Authorization header
+    // Authenticate either via Bearer token (mobile/external clients) or cookie session (web app).
     const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      logger.warn("Unauthorized request: Missing or invalid authorization header");
-      return new Response(
-        JSON.stringify({
-          error: {
-            code: "UNAUTHORIZED",
-            message: "Missing or invalid authorization header",
-            timestamp: new Date().toISOString(),
-          },
-        }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
 
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    let userId: string;
+    let userSupabase: SupabaseClient<Database> = locals.supabase as unknown as SupabaseClient<Database>;
 
-    // Verify the JWT token and get user
-    const { data: userData, error: authError } = await locals.supabase.auth.getUser(token);
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      const { data: userData, error: authError } = await locals.supabase.auth.getUser(token);
 
-    if (authError || !userData.user) {
-      logger.warn("Authentication failed: Invalid or expired token", { authError: authError?.message });
-      return new Response(
-        JSON.stringify({
-          error: {
-            code: "UNAUTHORIZED",
-            message: "Invalid or expired token",
-            timestamp: new Date().toISOString(),
-          },
-        }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+      if (authError || !userData.user) {
+        logger.warn("Authentication failed: Invalid or expired token", { authError: authError?.message });
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: "UNAUTHORIZED",
+              message: "Invalid or expired token",
+              timestamp: new Date().toISOString(),
+            },
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
 
-    const userId = userData.user.id;
-
-    // Add user context to logger
-    logger.addContext({ userId });
-    logger.info("User authenticated successfully");
-
-    // Create a Supabase client with the user's JWT token
-    // This ensures RLS policies work correctly with auth.uid()
-    const userSupabase = createClient<Database>(
-      import.meta.env.PUBLIC_SUPABASE_URL,
-      import.meta.env.PUBLIC_SUPABASE_KEY,
-      {
+      userId = userData.user.id;
+      userSupabase = createClient<Database>(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_KEY, {
         global: {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
+      });
+    } else {
+      const { data: userData, error: authError } = await locals.supabase.auth.getUser();
+
+      if (authError || !userData.user) {
+        logger.warn("Unauthorized request: missing credentials (no Bearer token and no cookie session)", {
+          authError: authError?.message,
+        });
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: "UNAUTHORIZED",
+              message: "Missing credentials",
+              timestamp: new Date().toISOString(),
+            },
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       }
-    );
+
+      userId = userData.user.id;
+    }
+
+    logger.addContext({ userId });
+    logger.info("User authenticated successfully");
 
     // Get household ID for rate limiting
     // We need the household ID early to enforce per-household rate limits
@@ -337,65 +339,68 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
   logger.info("Product list request received");
 
   try {
-    // Get the Authorization header
+    // Authenticate either via Bearer token (mobile/external clients) or cookie session (web app).
     const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      logger.warn("Unauthorized request: Missing or invalid authorization header");
-      return new Response(
-        JSON.stringify({
-          error: {
-            code: "UNAUTHORIZED",
-            message: "Missing or invalid authorization header",
-            timestamp: new Date().toISOString(),
-          },
-        }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
 
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    let userId: string;
+    let userSupabase: SupabaseClient<Database> = locals.supabase as unknown as SupabaseClient<Database>;
 
-    // Verify the JWT token and get user
-    const { data: userData, error: authError } = await locals.supabase.auth.getUser(token);
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      const { data: userData, error: authError } = await locals.supabase.auth.getUser(token);
 
-    if (authError || !userData.user) {
-      logger.warn("Authentication failed: Invalid or expired token", { authError: authError?.message });
-      return new Response(
-        JSON.stringify({
-          error: {
-            code: "UNAUTHORIZED",
-            message: "Invalid or expired token",
-            timestamp: new Date().toISOString(),
-          },
-        }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+      if (authError || !userData.user) {
+        logger.warn("Authentication failed: Invalid or expired token", { authError: authError?.message });
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: "UNAUTHORIZED",
+              message: "Invalid or expired token",
+              timestamp: new Date().toISOString(),
+            },
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
 
-    const userId = userData.user.id;
-
-    // Add user context to logger
-    logger.addContext({ userId });
-    logger.info("User authenticated successfully");
-
-    // Create a Supabase client with the user's JWT token
-    const userSupabase = createClient<Database>(
-      import.meta.env.PUBLIC_SUPABASE_URL,
-      import.meta.env.PUBLIC_SUPABASE_KEY,
-      {
+      userId = userData.user.id;
+      userSupabase = createClient<Database>(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_KEY, {
         global: {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
+      });
+    } else {
+      const { data: userData, error: authError } = await locals.supabase.auth.getUser();
+
+      if (authError || !userData.user) {
+        logger.warn("Unauthorized request: missing credentials (no Bearer token and no cookie session)", {
+          authError: authError?.message,
+        });
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: "UNAUTHORIZED",
+              message: "Missing credentials",
+              timestamp: new Date().toISOString(),
+            },
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       }
-    );
+
+      userId = userData.user.id;
+    }
+
+    logger.addContext({ userId });
+    logger.info("User authenticated successfully");
 
     // Parse query parameters
     const limit = Math.min(parseInt(url.searchParams.get("limit") || "10"), 50); // Max 50
