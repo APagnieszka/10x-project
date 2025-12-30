@@ -50,7 +50,7 @@ test("user can create account and sign in", async ({ page }) => {
 
     // Validate that cookie-based session works for protected pages.
     await page.goto("/products/add");
-    await expect(page.locator("h1", { hasText: "Add Product" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Dodaj produkt" })).toBeVisible();
   } finally {
     await deleteSupabaseUserIfPossible({ email, password });
   }

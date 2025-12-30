@@ -3,27 +3,31 @@ import { z } from "zod";
 // Product validation schemas
 export const createProductSchema = z
   .object({
-    name: z.string().min(1, "Name is required").max(255, "Name must be less than 255 characters"),
-    brand: z.string().max(255, "Brand must be less than 255 characters").optional(),
-    barcode: z.string().max(255, "Barcode must be less than 255 characters").optional(),
-    quantity: z.number().positive("Quantity must be greater than 0"),
+    name: z.string().min(1, "Nazwa jest wymagana").max(255, "Nazwa nie może mieć więcej niż 255 znaków"),
+    brand: z.string().max(255, "Marka nie może mieć więcej niż 255 znaków").optional(),
+    barcode: z.string().max(255, "Kod kreskowy nie może mieć więcej niż 255 znaków").optional(),
+    quantity: z.number().positive("Ilość musi być większa od 0"),
     unit: z.enum(["kg", "g", "l", "ml", "pcs"], {
-      errorMap: () => ({ message: "Unit must be one of: kg, g, l, ml, pcs" }),
+      errorMap: () => ({ message: "Jednostka musi być jedną z: kg, g, l, ml, pcs" }),
     }),
     expiration_date: z
       .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "Expiration date must be in YYYY-MM-DD format")
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Data ważności musi być w formacie RRRR-MM-DD")
       .refine((date) => {
         const parsedDate = new Date(date);
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set to start of today
         return !isNaN(parsedDate.getTime()) && parsedDate >= today;
-      }, "Expiration date must be today or a future date"),
+      }, "Data ważności musi być dzisiaj lub w przyszłości"),
     status: z.enum(["draft", "active", "spoiled"]).optional().default("draft"),
     opened: z.boolean().optional().default(false),
     to_buy: z.boolean().optional().default(false),
     opened_date: z.string().optional(),
-    main_image_url: z.string().url("Main image URL must be a valid URL").optional(),
+    main_image_url: z.preprocess((value) => {
+      if (typeof value !== "string") return value;
+      const trimmed = value.trim();
+      return trimmed.length === 0 ? undefined : trimmed;
+    }, z.string().url("URL głównego zdjęcia musi być poprawnym adresem URL").optional()),
   })
   .refine(
     (data) => {
@@ -34,7 +38,7 @@ export const createProductSchema = z
       return true;
     },
     {
-      message: "Opened date is required when product is marked as opened",
+      message: "Data otwarcia jest wymagana, gdy produkt jest oznaczony jako otwarty",
       path: ["opened_date"],
     }
   )
@@ -48,7 +52,7 @@ export const createProductSchema = z
       return true;
     },
     {
-      message: "Opened date must be a valid ISO 8601 timestamp",
+      message: "Data otwarcia musi być poprawnym znacznikiem czasu ISO 8601",
       path: ["opened_date"],
     }
   );

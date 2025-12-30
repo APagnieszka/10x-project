@@ -8,20 +8,20 @@ interface Props {
 
 const { title = "Foodzilla" } = Astro.props;
 
-// Check for authenticated session
+// Check for authenticated user (safer than relying on session data from cookies)
 const {
-  data: { session },
-} = await Astro.locals.supabase.auth.getSession();
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
 
 // Get household data if user is authenticated
 let householdName: string | undefined;
 let userEmail: string | undefined;
-if (session?.user) {
-  userEmail = session.user.email ?? undefined;
+if (user) {
+  userEmail = user.email ?? undefined;
   const { data: householdData } = await Astro.locals.supabase
     .from("user_households")
     .select("household_id, households(name)")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .single();
 
   // Supabase returns nested data as an object, not an array

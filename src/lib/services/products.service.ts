@@ -3,6 +3,8 @@ import type { Database } from "../../db/database.types.ts";
 import type { ProductDto } from "../../types.ts";
 import type { CreateProductInput } from "../validation/products.ts";
 
+const DEFAULT_PRODUCT_IMAGE_URL = "/images/default-product.svg";
+
 export class ProductsService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
@@ -56,6 +58,7 @@ export class ProductsService {
     }
 
     // Prepare product data
+    const mainImageUrl = input.main_image_url?.trim();
     const productData = {
       household_id: householdId,
       name: input.name,
@@ -68,7 +71,7 @@ export class ProductsService {
       opened: input.opened || false,
       to_buy: input.to_buy || false,
       opened_date: input.opened_date || null,
-      main_image_url: input.main_image_url || null,
+      main_image_url: mainImageUrl && mainImageUrl.length > 0 ? mainImageUrl : DEFAULT_PRODUCT_IMAGE_URL,
     };
 
     // Insert product

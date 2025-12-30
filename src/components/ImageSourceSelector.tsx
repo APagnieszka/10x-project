@@ -29,13 +29,13 @@ export function ImageSourceSelector({
         </CardHeader>
         <CardContent className="space-y-4">
           <Button onClick={onSelectCamera} variant="default" className="w-full py-6 text-lg" size="lg">
-            📷 Take Photo with Camera
+            📷 Zrób zdjęcie aparatem
           </Button>
           <Button onClick={onSelectGallery} variant="outline" className="w-full py-6 text-lg" size="lg">
-            🖼️ Choose from Gallery
+            🖼️ Wybierz z galerii
           </Button>
           <Button onClick={onCancel} variant="ghost" className="w-full mt-4">
-            Cancel
+            Anuluj
           </Button>
         </CardContent>
       </Card>

@@ -2,12 +2,12 @@
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 
-// Check for authenticated session
+// Check for authenticated user
 const {
-  data: { session },
-} = await Astro.locals.supabase.auth.getSession();
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
 
-if (!session) {
+if (!user) {
   return Astro.redirect("/login");
 }
 ---
