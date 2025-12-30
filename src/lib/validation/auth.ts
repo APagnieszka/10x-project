@@ -1,21 +1,21 @@
 import { z } from "zod";
 
-const emailSchema = z.string().trim().toLowerCase().email("Invalid email address");
+const emailSchema = z.string().trim().toLowerCase().email("Nieprawidłowy adres e-mail");
 
 // Auth validation schemas
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
 });
 
 export const registerSchema = z
   .object({
     email: emailSchema,
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(8, "Password confirmation must be at least 8 characters"),
+    password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
+    confirmPassword: z.string().min(8, "Powtórzone hasło musi mieć co najmniej 8 znaków"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Hasła nie są takie same",
     path: ["confirmPassword"],
   });
 
@@ -26,8 +26,8 @@ export const resetPasswordSchema = z.object({
 export const registerWithHouseholdSchema = z
   .object({
     email: emailSchema,
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(8, "Password confirmation must be at least 8 characters"),
+    password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
+    confirmPassword: z.string().min(8, "Powtórzone hasło musi mieć co najmniej 8 znaków"),
     householdName: z
       .string()
       .optional()
@@ -43,7 +43,7 @@ export const registerWithHouseholdSchema = z
       }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Hasła nie są takie same",
     path: ["confirmPassword"],
   });
 
