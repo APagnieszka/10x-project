@@ -64,13 +64,13 @@ describe("FavoritesList", () => {
   it("does not render when isVisible is false", () => {
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={false} />);
 
-    expect(screen.queryByText("Quick Select from Recent Products")).not.toBeInTheDocument();
+    expect(screen.queryByText("Szybki wybór z ostatnich produktów")).not.toBeInTheDocument();
   });
 
   it("loads and displays recent products when visible", async () => {
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={true} />);
 
-    expect(screen.getByText("Loading recent products...")).toBeInTheDocument();
+    expect(screen.getByText("Ładowanie ostatnich produktów...")).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText("Milk")).toBeInTheDocument();
@@ -91,12 +91,12 @@ describe("FavoritesList", () => {
     expect(screen.getByText("1 l")).toBeInTheDocument();
 
     const expectedDate = new Date(mockProducts[0].expiration_date).toLocaleDateString();
-    expect(screen.getByText(`Expires: ${expectedDate}`)).toBeInTheDocument();
+    expect(screen.getByText(`Ważne do: ${expectedDate}`)).toBeInTheDocument();
 
     const milkTitle = screen.getByText("Milk");
     const milkCard = milkTitle.closest('[data-slot="card"]');
     expect(milkCard).toBeTruthy();
-    expect(within(milkCard as HTMLElement).getByText("active")).toBeInTheDocument();
+    expect(within(milkCard as HTMLElement).getByText("W lodówce")).toBeInTheDocument();
   });
 
   it("shows product image when available", async () => {
@@ -149,8 +149,8 @@ describe("FavoritesList", () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
-    expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /dismiss/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /spróbuj ponownie/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /zamknij/i })).toBeInTheDocument();
   });
 
   it("retries loading when try again button is clicked", async () => {
@@ -165,7 +165,7 @@ describe("FavoritesList", () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
-    const tryAgainButton = screen.getByRole("button", { name: /try again/i });
+    const tryAgainButton = screen.getByRole("button", { name: /spróbuj ponownie/i });
 
     // Switch to fake timers only for the backoff delay.
     vi.useFakeTimers();
@@ -196,7 +196,7 @@ describe("FavoritesList", () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
-    const dismissButton = screen.getByRole("button", { name: /dismiss/i });
+    const dismissButton = screen.getByRole("button", { name: /zamknij/i });
     fireEvent.click(dismissButton);
 
     expect(screen.queryByText(errorMessage)).not.toBeInTheDocument();
@@ -208,10 +208,10 @@ describe("FavoritesList", () => {
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={true} />);
 
     await waitFor(() => {
-      expect(screen.getByText("No recent products found")).toBeInTheDocument();
+      expect(screen.getByText("Brak ostatnich produktów")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("Add some products first to see them here")).toBeInTheDocument();
+    expect(screen.getByText("Najpierw dodaj produkty, aby pojawiły się tutaj")).toBeInTheDocument();
   });
 
   it("shows refresh button when products are loaded", async () => {
@@ -221,7 +221,7 @@ describe("FavoritesList", () => {
       expect(screen.getByText("Milk")).toBeInTheDocument();
     });
 
-    const refreshButton = screen.getByRole("button", { name: /refresh list/i });
+    const refreshButton = screen.getByRole("button", { name: /odśwież listę/i });
     expect(refreshButton).toBeInTheDocument();
   });
 
@@ -232,7 +232,7 @@ describe("FavoritesList", () => {
       expect(screen.getByText("Milk")).toBeInTheDocument();
     });
 
-    const refreshButton = screen.getByRole("button", { name: /refresh list/i });
+    const refreshButton = screen.getByRole("button", { name: /odśwież listę/i });
     fireEvent.click(refreshButton);
 
     await waitFor(() => {
@@ -246,7 +246,7 @@ describe("FavoritesList", () => {
     const expectedDate = new Date(mockProducts[0].expiration_date).toLocaleDateString();
 
     await waitFor(() => {
-      expect(screen.getByText(`Expires: ${expectedDate}`)).toBeInTheDocument();
+      expect(screen.getByText(`Ważne do: ${expectedDate}`)).toBeInTheDocument();
     });
   });
 
@@ -254,7 +254,7 @@ describe("FavoritesList", () => {
     render(<FavoritesList onSelectProduct={mockOnSelectProduct} isVisible={true} />);
 
     await waitFor(() => {
-      const activeBadges = screen.getAllByText("active");
+      const activeBadges = screen.getAllByText("W lodówce");
       expect(activeBadges[0]).toHaveClass("bg-green-100", "text-green-800");
     });
   });

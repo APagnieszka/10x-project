@@ -1,0 +1,29 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { ProductsListPageIsland } from "@/components/ProductsListPageIsland";
+
+const supabase = Astro.locals.supabase;
+const {
+  data: { user },
+  error: authError,
+} = await supabase.auth.getUser();
+
+if (authError || !user) {
+  return Astro.redirect("/login");
+}
+
+const pageTitle = "Produkty - Foodzilla";
+---
+
+<Layout title={pageTitle}>
+  <main class="min-h-screen bg-background">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight mb-2">Produkty</h1>
+        <p class="text-muted-foreground">Lista produktów w Twoim gospodarstwie domowym.</p>
+      </header>
+
+      <ProductsListPageIsland client:load />
+    </div>
+  </main>
+</Layout>

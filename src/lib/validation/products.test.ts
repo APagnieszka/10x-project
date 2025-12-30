@@ -142,7 +142,7 @@ describe("createProductSchema", () => {
       if (!result.success) {
         const nameError = result.error.issues.find((issue) => issue.path[0] === "name");
         expect(nameError).toBeDefined();
-        expect(nameError?.message).toContain("required");
+        expect(nameError?.message).toContain("wymagana");
       }
     });
 
@@ -239,7 +239,7 @@ describe("createProductSchema", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const dateError = result.error.issues.find((issue) => issue.path[0] === "expiration_date");
-        expect(dateError?.message).toContain("future");
+        expect(dateError?.message).toContain("przyszłości");
       }
     });
 
@@ -275,7 +275,7 @@ describe("createProductSchema", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const openedDateError = result.error.issues.find((issue) => issue.path[0] === "opened_date");
-        expect(openedDateError?.message).toContain("required when product is marked as opened");
+        expect(openedDateError?.message).toContain("wymagana");
       }
     });
 
@@ -310,7 +310,23 @@ describe("createProductSchema", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const urlError = result.error.issues.find((issue) => issue.path[0] === "main_image_url");
-        expect(urlError?.message).toContain("valid URL");
+        expect(urlError?.message).toContain("adresem URL");
+      }
+    });
+
+    it("should allow empty main_image_url", () => {
+      const product = {
+        name: "Test Product",
+        quantity: 1,
+        unit: "pcs",
+        expiration_date: "2025-12-31",
+        main_image_url: "",
+      };
+
+      const result = createProductSchema.safeParse(product);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.main_image_url).toBeUndefined();
       }
     });
   });

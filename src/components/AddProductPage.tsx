@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AddProductForm } from "./AddProductForm";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { FavoritesList } from "./FavoritesList";
@@ -22,6 +22,7 @@ interface AddProductPageProps {
  * Manages the overall state and navigation between different views
  */
 export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
+  const [isHydrated, setIsHydrated] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>("form");
   const [formData, setFormData] = useState<Partial<CreateProductCommand>>({
     status: "draft",
@@ -33,6 +34,10 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
 
   const { success: showSuccessToast, error: showErrorToast } = useToast();
 
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   // Handle barcode detection and Open Food Facts lookup
   const handleBarcodeDetected = useCallback(
     async (barcode: string) => {
@@ -40,7 +45,7 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
       setIsLoadingProductData(true);
 
       try {
-        showSuccessToast("Barcode Scanned", `Looking up product information...`);
+        showSuccessToast("Kod zeskanowany", "Wyszukuję informacje o produkcie...");
 
         const productData = await fetchProductByBarcode(barcode);
 
@@ -54,7 +59,7 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
             main_image_url: productData.imageUrl || prev.main_image_url,
           }));
 
-          showSuccessToast("Product Found", `Filled form with data for ${productData.name || "product"}`);
+          showSuccessToast("Znaleziono produkt", `Uzupełniono formularz danymi: ${productData.name || "produkt"}`);
         } else {
           // No product found, just set the barcode
           setFormData((prev) => ({
@@ -63,8 +68,8 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
           }));
 
           showErrorToast(
-            "Product Not Found",
-            "Barcode scanned but no product data available. Please fill in the details manually."
+            "Nie znaleziono produktu",
+            "Zeskanowano kod, ale brak danych o produkcie. Uzupełnij szczegóły ręcznie."
           );
         }
       } catch {
@@ -75,8 +80,8 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
         }));
 
         showErrorToast(
-          "Lookup Failed",
-          "Barcode scanned but couldn't fetch product data. Please fill in the details manually."
+          "Nie udało się wyszukać",
+          "Zeskanowano kod, ale nie udało się pobrać danych produktu. Uzupełnij szczegóły ręcznie."
         );
       } finally {
         setIsLoadingProductData(false);
@@ -104,7 +109,7 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
 
       setCurrentView("form");
       setShowFavorites(false);
-      showSuccessToast("Product Selected", `Form filled with ${product.name}`);
+      showSuccessToast("Wybrano produkt", `Uzupełniono formularz: ${product.name}`);
     },
     [showSuccessToast]
   );
@@ -129,12 +134,12 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
   const handleBarcodeCancel = useCallback(() => setCurrentView("form"), []);
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8" data-hydrated={isHydrated ? "true" : "false"}>
       <div className="container mx-auto max-w-4xl">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground">Add New Product</h1>
+          <h1 className="text-3xl font-bold text-foreground">Dodaj nowy produkt</h1>
           <p className="text-muted-foreground mt-2">
-            Add a new product to your household inventory using barcode scanning or manual entry.
+            Dodaj nowy produkt do domowej spiżarni, skanując kod kreskowy albo wpisując dane ręcznie.
           </p>
         </div>
 
@@ -146,16 +151,16 @@ export function AddProductPage({ onSuccess, onCancel }: AddProductPageProps) {
                 {/* Action buttons */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Quick Actions</CardTitle>
-                    <CardDescription>Use these tools to quickly fill in product information</CardDescription>
+                    <CardTitle className="text-lg">Szybkie akcje</CardTitle>
+                    <CardDescription>Użyj tych narzędzi, aby szybko uzupełnić informacje o produkcie</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-3">
                       <Button onClick={handleScanBarcode} variant="outline" className="flex-1 min-w-0">
-                        📱 Scan Barcode
+                        📱 Skanuj kod kreskowy
                       </Button>
                       <Button onClick={handleShowFavorites} variant="outline" className="flex-1 min-w-0">
-                        ⭐ Quick Select
+                        ⭐ Szybki wybór
                       </Button>
                     </div>
                   </CardContent>

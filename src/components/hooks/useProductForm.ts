@@ -34,12 +34,12 @@ export function useProductForm(toast?: ToastFunctions): UseProductFormResult {
       try {
         const result = await createProduct(data);
         setSuccess(true);
-        toast?.success("Product added successfully!", `${result.name} has been added to your inventory.`);
+        toast?.success("Produkt dodany!", `${result.name} został dodany do spiżarni.`);
         return result;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+        const errorMessage = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
         setError(errorMessage);
-        toast?.error("Failed to add product", errorMessage);
+        toast?.error("Nie udało się dodać produktu", errorMessage);
         return null;
       } finally {
         setIsSubmitting(false);
