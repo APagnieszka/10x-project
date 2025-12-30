@@ -84,12 +84,12 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
     }
   };
 
-  const title = isLogin ? "Sign In" : isRegister ? "Create Account" : "Reset Password";
+  const title = isLogin ? "Zaloguj się" : isRegister ? "Utwórz konto" : "Reset hasła";
   const description = isLogin
-    ? "Enter your credentials to access your account"
+    ? "Wpisz dane logowania, aby uzyskać dostęp do konta"
     : isRegister
-      ? "Create a new account to get started"
-      : "Enter your email to receive a password reset link";
+      ? "Utwórz nowe konto, aby rozpocząć"
+      : "Podaj adres e-mail, aby otrzymać link do resetu hasła";
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -101,16 +101,16 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6" data-hydrated={isHydrated ? "true" : "false"}>
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
-            <Input id="email" type="email" {...register("email")} placeholder="Enter your email" />
+            <Label htmlFor="email">E-mail *</Label>
+            <Input id="email" type="email" {...register("email")} placeholder="Wpisz adres e-mail" />
             {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
           {/* Password - only for login and register */}
           {(isLogin || isRegister) && (
             <div className="space-y-2">
-              <Label htmlFor="password">Password *</Label>
-              <Input id="password" type="password" {...register("password")} placeholder="Enter your password" />
+              <Label htmlFor="password">Hasło *</Label>
+              <Input id="password" type="password" {...register("password")} placeholder="Wpisz hasło" />
               {formErrors.password && <p className="text-sm text-red-600">{formErrors.password.message}</p>}
             </div>
           )}
@@ -118,12 +118,12 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
           {/* Confirm Password - only for register */}
           {isRegister && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password *</Label>
+              <Label htmlFor="confirmPassword">Powtórz hasło *</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 {...register("confirmPassword")}
-                placeholder="Confirm your password"
+                placeholder="Powtórz hasło"
               />
               {formErrors.confirmPassword && (
                 <p className="text-sm text-red-600">{formErrors.confirmPassword.message}</p>
@@ -142,7 +142,13 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
           )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Processing..." : isLogin ? "Sign In" : isRegister ? "Create Account" : "Send Reset Link"}
+            {isSubmitting
+              ? "Przetwarzanie..."
+              : isLogin
+                ? "Zaloguj się"
+                : isRegister
+                  ? "Utwórz konto"
+                  : "Wyślij link do resetu"}
           </Button>
         </form>
 
@@ -151,31 +157,31 @@ export function AuthForm({ mode, isSubmitting = false }: AuthFormProps) {
           {isLogin && (
             <>
               <p className="text-sm text-muted-foreground">
-                Don&apos;t have an account?{" "}
+                Nie masz konta?{" "}
                 <a href="/register" className="text-primary hover:underline">
-                  Sign up
+                  Zarejestruj się
                 </a>
               </p>
               <p className="text-sm text-muted-foreground">
                 <a href="/reset-password" className="text-primary hover:underline">
-                  Forgot your password?
+                  Nie pamiętasz hasła?
                 </a>
               </p>
             </>
           )}
           {isRegister && (
             <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
+              Masz już konto?{" "}
               <a href="/login" className="text-primary hover:underline">
-                Sign in
+                Zaloguj się
               </a>
             </p>
           )}
           {isReset && (
             <p className="text-sm text-muted-foreground">
-              Remember your password?{" "}
+              Pamiętasz hasło?{" "}
               <a href="/login" className="text-primary hover:underline">
-                Sign in
+                Zaloguj się
               </a>
             </p>
           )}
